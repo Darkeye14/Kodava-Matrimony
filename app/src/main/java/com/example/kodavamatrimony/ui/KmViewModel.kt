@@ -8,6 +8,14 @@ import javax.inject.Inject
 class KmViewModel @Inject constructor() : ViewModel() {
 
 
+
+
+
+
+    fun signUp(){
+
+    }
+
 }
 
 
