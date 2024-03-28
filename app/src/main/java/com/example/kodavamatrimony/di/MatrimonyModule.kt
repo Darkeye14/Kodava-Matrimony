@@ -10,13 +10,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@Module
-@InstallIn(SingletonComponent::class)
-object MatrimonyModule {
-
-    @Provides
-    @Singleton
-    fun providesFirebaseFireStoreDataBase():FirebaseFirestore{
-        return FirebaseFirestore.getInstance()
-    }
-}
+//@Module
+//@InstallIn(SingletonComponent::class)
+//object MatrimonyModule {
+//
+//    @Provides
+//    @Singleton
+//    fun providesFirebaseFireStoreDataBase():FirebaseFirestore{
+//        return FirebaseFirestore.getInstance()
+//    }
+//}

@@ -1,8 +1,7 @@
-package com.example.kodavamatrimony.di
+package com.example.kodavamatrimony
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class LCApplication : Application() {
-}
+class KmApplication : Application()

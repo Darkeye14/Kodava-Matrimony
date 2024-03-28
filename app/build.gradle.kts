@@ -1,9 +1,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id("com.google.dagger.hilt.android") version "2.48" apply false
-    id("com.google.devtools.ksp") version "1.9.21-1.0.15"
-    id("com.google.gms.google-services")
+    id("com.google.devtools.ksp")
+    id ("com.google.dagger.hilt.android")
 }
 
 android {
@@ -75,9 +74,18 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
     //Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.49")
-    implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
-    ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
+    implementation("com.google.dagger:hilt-android:2.51")
+
     implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
 
+
+    ksp ("com.google.dagger:hilt-compiler:2.51")
+
+    // For instrumentation tests
+    androidTestImplementation  ("com.google.dagger:hilt-android-testing:2.51")
+    kspAndroidTest ("com.google.dagger:hilt-compiler:2.51")
+
+    // For local unit tests
+    testImplementation ("com.google.dagger:hilt-android-testing:2.51")
+    kspTest ("com.google.dagger:hilt-compiler:2.51")
 }

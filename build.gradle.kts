@@ -1,13 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    extra.apply {
-        set("room_version", "2.5.2")
-    }
-    dependencies {
-        classpath(libs.google.services)
-    }
-}
+
 plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
+    id("com.google.dagger.hilt.android") version "2.51" apply false
+    id("com.google.devtools.ksp") version "1.9.20-1.0.14" apply false
 }
