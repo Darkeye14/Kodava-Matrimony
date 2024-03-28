@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "572924596358",
+    "project_id": "kodava-matrimony",
+    "storage_bucket": "kodava-matrimony.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572924596358:android:5cdff38b74b3ca6eaf0107",
+        "android_client_info": {
+          "package_name": "com.example.kodavamatrimony"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQkPrwDzEJHtCPd9TEgDAuhVrv5F9uFjo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

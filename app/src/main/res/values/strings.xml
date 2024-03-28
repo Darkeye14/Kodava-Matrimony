@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Kodava Matrimony</string>
+    <string name="make_profile">Create a profile</string>
+    <string name="saved_profile">Saved Profiles</string>
+    <string name="search_profile">Search For Profiles</string>
+    <string name="your_profile">Your Profiles</string>
+
 </resources>
