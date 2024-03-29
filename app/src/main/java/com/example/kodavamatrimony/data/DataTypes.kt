@@ -1,16 +1,16 @@
 package com.example.kodavamatrimony.data
 
 data class UserData(
-    var userId : String?= null,
-    var name : String?= null,
-    var familyName : String?= null,
-    var number : String?= null,
-    var fathersName :String?= null,
-    var mothersName :String?= null,
-    var age :String? = null,
-    var description :String?= null,
-    var requirement :String?= null,
-    var imageUrl : String?= null,
+    var userId : String?= "",
+    var name : String?= "",
+    var familyName : String?= "",
+    var number : String?= "",
+    var fathersName :String?= "",
+    var mothersName :String?= "",
+    var age :String? = "",
+    var description :String?= "",
+    var requirement :String?= "",
+    var imageUrl : String?= "",
 ){
     fun toMap() = mapOf(
         "userId" to userId,

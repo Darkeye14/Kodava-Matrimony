@@ -66,9 +66,9 @@ class KmViewModel @Inject constructor(
 
             if(it.isSuccessful){
                 signIn.value =true
-
+// do another fun for auth too
 //just navigate
-               // createOrUpdateProfile(name,number)
+                createOrUpdateProfile(name = name,number = number)
             }
                 else{
                     handleException(it.exception,"SignUp failed")
@@ -112,8 +112,7 @@ class KmViewModel @Inject constructor(
                     }
                     else{
                         db.collection(USER_NODE)
-                            .document(uid)
-                            .set(userData, SetOptions.merge())
+                            .add(userData)
                         getUserData(uid)
                         inProgress.value = false
                         creatingProfile.value = false
@@ -141,6 +140,31 @@ class KmViewModel @Inject constructor(
                 }
             }
     }
+
+    fun login(
+        email:String,
+        password: String
+    ){
+        if(email.isEmpty() or password.isEmpty()){
+            handleException(customMessage = "Please fill all the fields")
+            return
+        }else{
+            inProgress.value = true
+            auth.signInWithEmailAndPassword(email,password)
+                .addOnCompleteListener {
+                    if(it.isSuccessful){
+                        signIn.value = true
+                        inProgress.value = false
+                        auth.currentUser?.uid?.let{
+                            getUserData(it)
+                        }
+                    }else{
+                        handleException(it.exception,customMessage = "Login failed")
+                    }
+                }
+        }
+    }
+
 
 
     fun handleException(
