@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
+import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 
 @Composable
@@ -123,7 +124,14 @@ fun SignUpScreen(navController: NavController ,
                 }
             )
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                          viewModel.signUp(
+                              nameState.value.text,
+                              numberState.value.text,
+                              emailState.value.text.trim(),
+                              passwordState.value.text.trim()
+                          )
+                },
                 modifier = Modifier
                     .padding(8.dp)
             ) {
@@ -135,10 +143,13 @@ fun SignUpScreen(navController: NavController ,
                 modifier = Modifier
                     .padding(8.dp)
                     .clickable {
-                        navigateTo(navController,DestinationScreen.Login.route)
+                        navigateTo(navController, DestinationScreen.Login.route)
                     }
             )
 
+        }
+        if(viewModel.inProgress.value == true){
+            CommonProgressBar()
         }
     }
 }
