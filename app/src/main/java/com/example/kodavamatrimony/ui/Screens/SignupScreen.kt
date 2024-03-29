@@ -148,7 +148,7 @@ fun SignUpScreen(navController: NavController ,
             )
 
         }
-        if(viewModel.inProgress.value == true){
+        if(viewModel.inProgress.value ){
             CommonProgressBar()
         }
     }

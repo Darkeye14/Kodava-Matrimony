@@ -4,5 +4,6 @@
     <string name="saved_profile">Saved Profiles</string>
     <string name="search_profile">Search For Profiles</string>
     <string name="your_profile">Your Profiles</string>
-
+    <string name="description">Include Occupation, Rashi, Gana etc</string>
+    <string name="requirements">What do you look for in your partner</string>
 </resources>

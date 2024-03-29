@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import com.example.kodavamatrimony.ui.KmViewModel
+import com.example.kodavamatrimony.ui.Screens.CreateProfileScreen
 import com.example.kodavamatrimony.ui.Screens.LoginScreen
 import com.example.kodavamatrimony.ui.Screens.SignUpScreen
 
@@ -15,13 +16,16 @@ fun KmNavigation() {
     var viewModel = hiltViewModel<KmViewModel>()
     NavHost(
         navController = navController,
-        startDestination = DestinationScreen.SignUp.route
+        startDestination = DestinationScreen.CreateProfileScreen.route
     ){
         composable(DestinationScreen.SignUp.route){
             SignUpScreen(navController,viewModel)
         }
         composable(DestinationScreen.Login.route){
             LoginScreen()
+        }
+        composable(DestinationScreen.CreateProfileScreen.route){
+            CreateProfileScreen(navController = navController, viewModel = viewModel)
         }
     }
 }
