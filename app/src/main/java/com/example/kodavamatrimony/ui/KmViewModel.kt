@@ -10,6 +10,7 @@ import com.example.kodavamatrimony.data.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -21,25 +22,51 @@ class KmViewModel @Inject constructor(
 
 
 
-init {
 
-}
     var inProgress = mutableStateOf(false)
     val eventMutableState = mutableStateOf<SignUpEvent<String?>?>(null)
     var signIn = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
     val creatingProfile = mutableStateOf(false)
+
+    init {
+        val currentUser = auth.currentUser
+        signIn.value = currentUser != null
+        currentUser?.uid?.let {
+            getUserData(it)
+        }
+    }
     fun signUp(
         name :String,
         number :String,
         email :String,
         password : String
     ){
+        inProgress.value = true
+        if(email.isEmpty() or password.isEmpty()){
+            handleException(customMessage = "Please Fill All The Fields")
+            return
+        }
+        inProgress.value = true
+        db.collection(USER_NODE).whereEqualTo("email",email)
+            .get()
+            .addOnSuccessListener {
+                if(it.isEmpty){
+                    auth.createUserWithEmailAndPassword(email,password)
+                        .addOnCompleteListener {
+
+                    }
+                }else{
+                    handleException(customMessage = "email already exist")
+                        inProgress.value=false
+                }
+            }
         auth.createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener {
-                inProgress.value = true
+
             if(it.isSuccessful){
                 signIn.value =true
+
 //just navigate
                // createOrUpdateProfile(name,number)
             }
@@ -67,9 +94,6 @@ init {
             name = name ?:userData.value?.name ,
             familyName = familyName?:userData.value?.name,
             number = number?:userData.value?.number,
-
-
-
             fathersName = fathersName?:userData.value?.number,
             mothersName = mothersName?:userData.value?.number,
             age = age?:userData.value?.number,
@@ -77,31 +101,45 @@ init {
             requirement = requirement?:userData.value?.number,
             imageUrl = imageUrl?:userData.value?.imageUrl
         )
-        if(!creatingProfile.value) {
+        uid?.let {
             inProgress.value = true
-            db.collection(PROFILES)
-                .document()
-    //update            .update(userData)
-//                .addOnSuccessListener {
-//
-//                }
-
-        }
-        else{
             db.collection(USER_NODE)
-                .document()
-                .set(userData, SetOptions.merge())
-                .addOnFailureListener{
-                    handleException(it,"Cannot Add User")
+                .document(uid)
+                .get()
+                .addOnSuccessListener {
+                    if(it.exists()){
+  //update
+                    }
+                    else{
+                        db.collection(USER_NODE)
+                            .document(uid)
+                            .set(userData, SetOptions.merge())
+                        getUserData(uid)
+                        inProgress.value = false
+                        creatingProfile.value = false
+                    }
                 }
-            getUserData()
-            inProgress.value = false
-            creatingProfile.value = false
+                .addOnFailureListener{
+                    handleException(it,"Cannot Retrieve User")
+                }
         }
+
     }
 
-    private fun getUserData() {
-
+    private fun getUserData(uid :String) {
+        inProgress.value=true
+        db.collection(USER_NODE)
+            .document(uid)
+            .addSnapshotListener { value, error ->
+                if(error !=null){
+                    handleException(error,"cannot retrieve user")
+                }
+                if(value!=null){
+                    var user = value.toObject<UserData>()
+                    userData.value = user
+                    inProgress.value = false
+                }
+            }
     }
 
 

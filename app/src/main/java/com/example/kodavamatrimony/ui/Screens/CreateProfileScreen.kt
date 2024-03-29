@@ -249,7 +249,7 @@ fun CreateProfileScreen(
             )
             Button(
                 onClick = {
-                    viewModel.creatingProfile.value = true
+
                     viewModel.createOrUpdateProfile(
                         nameState.value.text,
                         familyNameState.value.text,

@@ -1,6 +1,7 @@
 package com.example.kodavamatrimony.ui.Screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.navigation.NavController
 import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
+import com.example.kodavamatrimony.ui.Utility.CheckSignedIn
 import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 
@@ -37,6 +39,7 @@ import com.example.kodavamatrimony.ui.Utility.navigateTo
 fun SignUpScreen(navController: NavController ,
                  viewModel: KmViewModel
 ) {
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -45,7 +48,8 @@ fun SignUpScreen(navController: NavController ,
             modifier = Modifier
                 .fillMaxSize()
                 .wrapContentHeight()
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .background(color = MaterialTheme.colorScheme.primaryContainer),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
             val nameState = remember {
@@ -131,6 +135,8 @@ fun SignUpScreen(navController: NavController ,
                               emailState.value.text.trim(),
                               passwordState.value.text.trim()
                           )
+    //careful
+                    navigateTo(navController,DestinationScreen.HomeScreen.route)
                 },
                 modifier = Modifier
                     .padding(8.dp)
