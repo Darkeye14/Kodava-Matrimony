@@ -94,10 +94,10 @@ fun CreateProfileScreen(
             val nameState = remember {
                 mutableStateOf(TextFieldValue())
             }
-            val familyNameState = rememberSaveable {
+            val familyNameState = remember {
                 mutableStateOf(TextFieldValue())
             }
-            val fatherNameState = rememberSaveable {
+            val fatherNameState = remember {
                 mutableStateOf(TextFieldValue())
             }
             val motherNameState = remember {
