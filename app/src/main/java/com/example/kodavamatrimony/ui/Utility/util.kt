@@ -1,10 +1,12 @@
 package com.example.kodavamatrimony.ui.Utility
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -14,7 +16,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.layout.ContentScale
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 
@@ -39,7 +45,7 @@ fun CommonProgressBar() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.error)
     }
 }
 
@@ -65,5 +71,21 @@ fun CheckSignedIn(viewModel : KmViewModel,
             }
         }
     }
-
 }
+
+
+@Composable
+fun CommonImage(
+    data :String?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop
+) {
+    val painter = rememberAsyncImagePainter(model = data)
+    Image(
+        painter = painter,
+        contentDescription = null,
+        modifier,
+        contentScale = contentScale
+    )
+}
+

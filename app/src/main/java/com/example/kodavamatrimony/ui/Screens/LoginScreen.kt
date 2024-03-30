@@ -107,7 +107,7 @@ fun LoginScreen(
             )
             Button(
                 onClick = {
-
+                    viewModel.login(emailState.value.text,passwordState.value.text,navController)
                     //careful
                     navigateTo(navController, DestinationScreen.HomeScreen.route)
                 },

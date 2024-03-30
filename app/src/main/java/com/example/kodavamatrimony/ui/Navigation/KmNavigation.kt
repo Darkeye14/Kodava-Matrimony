@@ -31,10 +31,10 @@ fun KmNavigation() {
             SignUpScreen(navController,viewModel)
         }
         composable(DestinationScreen.HomeScreen.route){
-            HomeScreen()
+            HomeScreen(navController)
         }
         composable(DestinationScreen.SearchScreen.route){
-            SearchScreen()
+            SearchScreen(navController)
         }
         composable(DestinationScreen.Login.route){
             LoginScreen(viewModel,navController)
@@ -42,5 +42,6 @@ fun KmNavigation() {
         composable(DestinationScreen.CreateProfileScreen.route){
             CreateProfileScreen(navController = navController, viewModel = viewModel)
         }
+
     }
 }

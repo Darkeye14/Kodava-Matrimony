@@ -1,23 +1,28 @@
 package com.example.kodavamatrimony.ui
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.kodavamatrimony.data.PROFILES
+import androidx.navigation.NavController
 import com.example.kodavamatrimony.data.SignUpEvent
 import com.example.kodavamatrimony.data.USER_NODE
 import com.example.kodavamatrimony.data.UserData
+import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
+import com.example.kodavamatrimony.ui.Utility.navigateTo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.toObject
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class KmViewModel @Inject constructor(
    private val auth : FirebaseAuth,
-    private var db : FirebaseFirestore
+    private var db : FirebaseFirestore,
+    private val storage : FirebaseStorage
 ) : ViewModel() {
 
 
@@ -40,7 +45,8 @@ class KmViewModel @Inject constructor(
         name :String,
         number :String,
         email :String,
-        password : String
+        password : String,
+        navController: NavController
     ){
         inProgress.value = true
         if(email.isEmpty() or password.isEmpty()){
@@ -54,7 +60,8 @@ class KmViewModel @Inject constructor(
                 if(it.isEmpty){
                     auth.createUserWithEmailAndPassword(email,password)
                         .addOnCompleteListener {
-
+    ////
+                            navigateTo(navController,DestinationScreen.HomeScreen.route)
                     }
                 }else{
                     handleException(customMessage = "email already exist")
@@ -63,12 +70,14 @@ class KmViewModel @Inject constructor(
             }
         auth.createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener {
-
+    ////
+                navigateTo(navController,DestinationScreen.HomeScreen.route)
             if(it.isSuccessful){
                 signIn.value =true
+                inProgress.value = false
 // do another fun for auth too
 //just navigate
-                createOrUpdateProfile(name = name,number = number)
+               // createOrUpdateProfile(name = name,number = number)
             }
                 else{
                     handleException(it.exception,"SignUp failed")
@@ -134,7 +143,7 @@ class KmViewModel @Inject constructor(
                     handleException(error,"cannot retrieve user")
                 }
                 if(value!=null){
-                    var user = value.toObject<UserData>()
+                    val user = value.toObject<UserData>()
                     userData.value = user
                     inProgress.value = false
                 }
@@ -143,7 +152,9 @@ class KmViewModel @Inject constructor(
 
     fun login(
         email:String,
-        password: String
+        password: String,
+        navController: NavController
+
     ){
         if(email.isEmpty() or password.isEmpty()){
             handleException(customMessage = "Please fill all the fields")
@@ -158,6 +169,7 @@ class KmViewModel @Inject constructor(
                         auth.currentUser?.uid?.let{
                             getUserData(it)
                         }
+                        navigateTo(navController,DestinationScreen.HomeScreen.route)
                     }else{
                         handleException(it.exception,customMessage = "Login failed")
                     }
@@ -182,6 +194,36 @@ class KmViewModel @Inject constructor(
 
         eventMutableState.value  = SignUpEvent(message)
         inProgress.value = false
+    }
+
+    fun uploadProfileImage(
+        uri : Uri
+    ){
+        uploadImage(uri){
+            createOrUpdateProfile(imageUrl = it.toString())
+        }
+    }
+
+    fun uploadImage(
+        uri : Uri,
+        onSuccess : (Uri) ->Unit
+    ){
+        inProgress.value = true
+        val storageRef = storage.reference
+        val uuid = UUID.randomUUID()
+        val imageRef = storageRef.child("images/$uuid")
+        val uploadTask = imageRef
+            .putFile(uri)
+            uploadTask.addOnSuccessListener {
+                val result = it.metadata
+                    ?.reference
+                    ?.downloadUrl
+                result?.addOnSuccessListener(onSuccess)
+                inProgress.value = false
+            }
+                .addOnFailureListener{
+                    handleException(it)
+                }
     }
 
 }

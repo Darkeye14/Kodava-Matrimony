@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -90,4 +91,7 @@ dependencies {
     // For local unit tests
     testImplementation ("com.google.dagger:hilt-android-testing:2.51")
     kspTest ("com.google.dagger:hilt-compiler:2.51")
+
+    //coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }
