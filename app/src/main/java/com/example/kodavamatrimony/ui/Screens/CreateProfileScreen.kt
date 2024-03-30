@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -14,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -39,7 +41,13 @@ fun CreateProfileScreen(
     navController: NavController,
     viewModel: KmViewModel
 ) {
-    Box(
+    Scaffold(bottomBar = {
+        BottomNavigationMenu(
+            selectedItem = BottomNavigationItem.CREATEPROFILELIST,
+            navController = navController,
+
+            )
+    },
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
@@ -48,6 +56,8 @@ fun CreateProfileScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .wrapContentHeight()
+                .padding(it)
+                .background(MaterialTheme.colorScheme.primaryContainer)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
@@ -271,5 +281,4 @@ fun CreateProfileScreen(
             CommonProgressBar()
         }
     }
-    
 }

@@ -17,14 +17,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.theme.KodavaMatrimonyTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    navController: NavController,
     modifier: Modifier = Modifier
 ){
+    
+    BottomNavigationMenu(
+        selectedItem = BottomNavigationItem.HOMELIST,
+        navController = navController
+    )
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
@@ -35,6 +42,12 @@ fun HomeScreen(
                         containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.onPrimary
                     )
+                )
+            },
+            bottomBar = {
+                BottomNavigationMenu(
+                    selectedItem = BottomNavigationItem.HOMELIST,
+                    navController = navController
                 )
             }
         ) {
@@ -74,12 +87,3 @@ fun HomeScreen(
 }
 
 
-@Preview
-@Composable
-fun Screen(
-    modifier: Modifier = Modifier
-) {
-    KodavaMatrimonyTheme {
-        HomeScreen()
-    }
-}
