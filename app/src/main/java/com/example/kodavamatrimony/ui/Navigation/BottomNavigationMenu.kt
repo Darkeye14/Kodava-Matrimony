@@ -22,9 +22,9 @@ enum class BottomNavigationItem (
     val icon :Int,
     val destinationScreen: DestinationScreen
 ){
-    HOMELIST(R.drawable.home_button, DestinationScreen.HomeScreen),
-    SEARCHLIST(R.drawable.loupe, DestinationScreen.SearchScreen),
-    CREATEPROFILELIST(R.drawable.resume, DestinationScreen.CreateProfileScreen),
+    HOMELIST(R.drawable.home, DestinationScreen.HomeScreen),
+    SEARCHLIST(R.drawable.people, DestinationScreen.SearchScreen),
+    CREATEPROFILELIST(R.drawable.curriculum_vitae, DestinationScreen.CreateProfileScreen),
 
 }
 @Composable
@@ -35,7 +35,7 @@ fun BottomNavigationMenu(
     ) {
     Row(
       modifier = Modifier
-          .padding(4.dp)
+
           .fillMaxWidth()
           .wrapContentHeight()
           .background(MaterialTheme.colorScheme.onPrimaryContainer)
@@ -52,7 +52,7 @@ fun BottomNavigationMenu(
                         navigateTo(navController,item.destinationScreen.route)
                     },
                 colorFilter = if(item == selectedItem){
-                    ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                    ColorFilter.tint(MaterialTheme.colorScheme.primaryContainer)
                 }
                 else
                 ColorFilter.tint(MaterialTheme.colorScheme.tertiary)
