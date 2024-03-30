@@ -1,21 +1,34 @@
 package com.example.kodavamatrimony.ui.Screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,8 +48,10 @@ import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationItem
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationMenu
+import com.example.kodavamatrimony.ui.Utility.CommonImage
 import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateProfileScreen(
     navController: NavController,
@@ -47,6 +62,16 @@ fun CreateProfileScreen(
             selectedItem = BottomNavigationItem.CREATEPROFILELIST,
             navController = navController,
             )
+    },topBar = {
+        CenterAlignedTopAppBar(
+            title = {
+                Text(text = stringResource(id = R.string.app_name))
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.onPrimary
+            )
+        )
     },
         modifier = Modifier
             .fillMaxSize()
@@ -61,6 +86,8 @@ fun CreateProfileScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
+            val imageUrl = viewModel.userData.value?.imageUrl
+
             val nameState = remember {
                 mutableStateOf(TextFieldValue())
             }
@@ -102,6 +129,9 @@ fun CreateProfileScreen(
                 modifier = Modifier.padding(8.dp)
             )
  //Add profile pic
+            
+            ProfileImage(imageUrl = imageUrl, viewModel = viewModel)
+
             OutlinedTextField(
                 value = nameState.value,
                 onValueChange ={
@@ -278,6 +308,50 @@ fun CreateProfileScreen(
             }
         }
         if(viewModel.inProgress.value ){
+            CommonProgressBar()
+        }
+    }
+}
+
+
+
+@Composable
+fun ProfileImage(
+    imageUrl: String?,
+    viewModel: KmViewModel
+) {
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) {uri ->
+        uri?.let {
+            viewModel.uploadProfileImage(uri)
+        }
+    }
+    Box(
+        modifier = Modifier
+            .height(intrinsicSize = IntrinsicSize.Min)
+    ){
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+                .clickable {
+                    launcher.launch("image/*")
+                },
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Card(
+                shape = CircleShape,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(100.dp)
+
+            ) {
+                CommonImage(data = imageUrl)
+            }
+            Text(text = "Change Profile Picture")
+        }
+        if (viewModel.inProgress.value){
             CommonProgressBar()
         }
     }
