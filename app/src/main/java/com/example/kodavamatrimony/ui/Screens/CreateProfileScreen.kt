@@ -2,7 +2,6 @@ package com.example.kodavamatrimony.ui.Screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.KmViewModel
+import com.example.kodavamatrimony.ui.Navigation.BottomNavigationItem
+import com.example.kodavamatrimony.ui.Navigation.BottomNavigationMenu
 import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
 
 @Composable
@@ -45,7 +46,6 @@ fun CreateProfileScreen(
         BottomNavigationMenu(
             selectedItem = BottomNavigationItem.CREATEPROFILELIST,
             navController = navController,
-
             )
     },
         modifier = Modifier

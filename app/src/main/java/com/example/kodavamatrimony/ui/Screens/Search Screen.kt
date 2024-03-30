@@ -2,8 +2,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import com.example.kodavamatrimony.ui.Screens.BottomNavigationItem
-import com.example.kodavamatrimony.ui.Screens.BottomNavigationMenu
+import com.example.kodavamatrimony.ui.Navigation.BottomNavigationItem
+import com.example.kodavamatrimony.ui.Navigation.BottomNavigationMenu
 
 @Composable
 fun SearchScreen(

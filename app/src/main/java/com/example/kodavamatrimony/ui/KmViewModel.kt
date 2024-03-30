@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.example.kodavamatrimony.data.PROFILES
 import com.example.kodavamatrimony.data.SignUpEvent
 import com.example.kodavamatrimony.data.USER_NODE
 import com.example.kodavamatrimony.data.UserData
@@ -12,7 +11,6 @@ import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -74,7 +72,7 @@ class KmViewModel @Inject constructor(
                 signIn.value =true
 // do another fun for auth too
 //just navigate
-                createOrUpdateProfile(name = name,number = number)
+                //createOrUpdateProfile(name = name,number = number)
             }
                 else{
                     handleException(it.exception,"SignUp failed")
@@ -140,7 +138,7 @@ class KmViewModel @Inject constructor(
                     handleException(error,"cannot retrieve user")
                 }
                 if(value!=null){
-                    var user = value.toObject<UserData>()
+                    val user = value.toObject<UserData>()
                     userData.value = user
                     inProgress.value = false
                 }

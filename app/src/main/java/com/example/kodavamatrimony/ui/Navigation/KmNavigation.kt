@@ -7,7 +7,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import com.example.kodavamatrimony.ui.KmViewModel
-import com.example.kodavamatrimony.ui.Screens.BottomNavigationMenu
 import com.example.kodavamatrimony.ui.Screens.CreateProfileScreen
 import com.example.kodavamatrimony.ui.Screens.HomeScreen
 import com.example.kodavamatrimony.ui.Screens.LoginScreen

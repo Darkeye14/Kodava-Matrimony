@@ -1,4 +1,4 @@
-package com.example.kodavamatrimony.ui.Screens
+package com.example.kodavamatrimony.ui.Navigation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,7 +16,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.kodavamatrimony.R
-import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 
 enum class BottomNavigationItem (
@@ -33,7 +32,7 @@ fun BottomNavigationMenu(
     selectedItem : BottomNavigationItem,
     navController: NavController,
 
-) {
+    ) {
     Row(
       modifier = Modifier
           .padding(4.dp)
@@ -46,7 +45,7 @@ fun BottomNavigationMenu(
                 painter = painterResource(id = item.icon)
                 , contentDescription = null,
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(50.dp)
                     .padding(4.dp)
                     .weight(1f)
                     .clickable {
