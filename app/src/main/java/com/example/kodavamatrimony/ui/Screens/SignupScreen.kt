@@ -133,10 +133,11 @@ fun SignUpScreen(navController: NavController ,
                               nameState.value.text,
                               numberState.value.text,
                               emailState.value.text.trim(),
-                              passwordState.value.text.trim()
+                              passwordState.value.text.trim(),
+                              navController
                           )
     //careful
-                    navigateTo(navController,DestinationScreen.HomeScreen.route)
+
                 },
                 modifier = Modifier
                     .padding(8.dp)

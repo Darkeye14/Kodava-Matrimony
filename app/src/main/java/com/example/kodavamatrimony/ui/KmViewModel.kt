@@ -3,10 +3,13 @@ package com.example.kodavamatrimony.ui
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import com.example.kodavamatrimony.data.PROFILES
 import com.example.kodavamatrimony.data.SignUpEvent
 import com.example.kodavamatrimony.data.USER_NODE
 import com.example.kodavamatrimony.data.UserData
+import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
+import com.example.kodavamatrimony.ui.Utility.navigateTo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -40,7 +43,8 @@ class KmViewModel @Inject constructor(
         name :String,
         number :String,
         email :String,
-        password : String
+        password : String,
+        navController: NavController
     ){
         inProgress.value = true
         if(email.isEmpty() or password.isEmpty()){
@@ -54,7 +58,8 @@ class KmViewModel @Inject constructor(
                 if(it.isEmpty){
                     auth.createUserWithEmailAndPassword(email,password)
                         .addOnCompleteListener {
-
+    ////
+                            navigateTo(navController,DestinationScreen.HomeScreen.route)
                     }
                 }else{
                     handleException(customMessage = "email already exist")
@@ -63,7 +68,8 @@ class KmViewModel @Inject constructor(
             }
         auth.createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener {
-
+    ////
+                navigateTo(navController,DestinationScreen.HomeScreen.route)
             if(it.isSuccessful){
                 signIn.value =true
 // do another fun for auth too
@@ -143,7 +149,9 @@ class KmViewModel @Inject constructor(
 
     fun login(
         email:String,
-        password: String
+        password: String,
+        navController: NavController
+
     ){
         if(email.isEmpty() or password.isEmpty()){
             handleException(customMessage = "Please fill all the fields")
@@ -158,6 +166,7 @@ class KmViewModel @Inject constructor(
                         auth.currentUser?.uid?.let{
                             getUserData(it)
                         }
+                        navigateTo(navController,DestinationScreen.HomeScreen.route)
                     }else{
                         handleException(it.exception,customMessage = "Login failed")
                     }
