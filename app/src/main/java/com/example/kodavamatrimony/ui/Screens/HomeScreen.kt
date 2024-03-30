@@ -29,7 +29,7 @@ fun HomeScreen(
             topBar = {
                 CenterAlignedTopAppBar(
                     title = {
-
+                            Text(text = stringResource(id = R.string.app_name))
                 },
                     colors = topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -54,15 +54,18 @@ fun HomeScreen(
                 Button(
                     onClick = { },
                 ) {
+                    Text(text = stringResource(R.string.your_profile))
                 }
 
                 Button(
                     onClick = { },
                 ) {
+                    Text(text = stringResource(R.string.saved_profile))
                 }
                 Button(
                     onClick = { },
                 ) {
+                    Text(text = stringResource(R.string.search_profile))
                 }
 
             }
