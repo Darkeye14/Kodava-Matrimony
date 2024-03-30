@@ -70,9 +70,10 @@ class KmViewModel @Inject constructor(
                 navigateTo(navController,DestinationScreen.HomeScreen.route)
             if(it.isSuccessful){
                 signIn.value =true
+                inProgress.value = false
 // do another fun for auth too
 //just navigate
-                //createOrUpdateProfile(name = name,number = number)
+               // createOrUpdateProfile(name = name,number = number)
             }
                 else{
                     handleException(it.exception,"SignUp failed")

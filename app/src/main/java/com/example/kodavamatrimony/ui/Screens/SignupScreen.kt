@@ -150,9 +150,7 @@ fun SignUpScreen(navController: NavController ,
                 modifier = Modifier
                     .padding(8.dp)
                     .clickable {
-                        navController.navigate(DestinationScreen.Login.route){
-                            popUpTo(0)
-                        }
+                        navigateTo(navController, DestinationScreen.Login.route)
                     }
             )
 
