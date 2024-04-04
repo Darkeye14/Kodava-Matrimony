@@ -1,6 +1,8 @@
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -72,15 +74,16 @@ fun SearchScreen(
             }
             val onFabClick :()->Unit = { showDialog.value = true}
             val onDismiss :()->Unit = { showDialog.value = false}
-            if(profiles.isEmpty()){
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(PaddingValues),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                 Text(text = "No Profiles Available")
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(PaddingValues)
+                    .background(color = MaterialTheme.colorScheme.primaryContainer),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                if (profiles.isEmpty()){
+                    Text(text = "No Profiles Available")
                 }
             }
         }

@@ -14,6 +14,7 @@ import com.example.kodavamatrimony.data.UserProfile
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
@@ -273,6 +274,17 @@ class KmViewModel @Inject constructor(
                     handleException(it)
                 }
         }
+    }
+
+    fun populateProfiles(
+
+    ){
+        inProgressProfile.value = true
+//        db.collection(MY_PROFILES).whereEqualTo(
+//            Filter.or(
+//
+//            )
+//        )
     }
 
 }

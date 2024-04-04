@@ -20,6 +20,8 @@ import androidx.navigation.NavController
 import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationItem
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationMenu
+import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
+import com.example.kodavamatrimony.ui.Utility.navigateTo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,9 +62,11 @@ fun HomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(
-                    onClick = { },
+                    onClick = {
+                              navigateTo(navController,DestinationScreen.MyProfilesScreen.route)
+                    },
                 ) {
-                    Text(text = stringResource(R.string.make_profile))
+                    Text(text = "My Profiles")
                 }
                 Button(
                     onClick = { },
