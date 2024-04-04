@@ -7,13 +7,16 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.kodavamatrimony.data.SignUpEvent
 import com.example.kodavamatrimony.data.ChatProfileData
+import com.example.kodavamatrimony.data.MY_PROFILES
 import com.example.kodavamatrimony.data.USER_NODE
 import com.example.kodavamatrimony.data.UserData
+import com.example.kodavamatrimony.data.UserProfile
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
@@ -98,7 +101,8 @@ class KmViewModel @Inject constructor(
         age: String?= null,
         description :String?= null,
         requirement :String?= null,
-        imageUrl: String?=null
+        imageUrl: String?=null,
+        gender : String?= null
     ){
         val uid = auth.currentUser?.uid
         val userData = UserData(
@@ -111,7 +115,8 @@ class KmViewModel @Inject constructor(
             age = age?:userData.value?.number,
             description = description?:userData.value?.number,
             requirement = requirement?:userData.value?.number,
-            imageUrl = imageUrl?:userData.value?.imageUrl
+            imageUrl = imageUrl?:userData.value?.imageUrl,
+            gender = gender?:userData.value?.gender
         )
         uid?.let {
             inProgress.value = true
@@ -229,8 +234,45 @@ class KmViewModel @Inject constructor(
                 }
     }
 
-    fun onSaveProfile(it: String) {
+    fun onAddedProfile(name: String) {
+        if(name.isEmpty() ){
+            handleException(customMessage = "Name Error")
+        }else{
+            db.collection(USER_NODE)
+                .whereEqualTo("name",name)
+                .get()
+                .addOnSuccessListener {
+                    if(it.isEmpty){
+                        handleException(customMessage = "profile not found")
+                    }else{
+                       val chatPartner = it.toObjects<UserData>()[0]
+                        val id = db.collection(MY_PROFILES).document().id
+                        val profile = ChatProfileData(
+                            profileId = id,
+                            UserProfile(
+                                userData.value?.userId,
+                                userData.value?.name,
+                                userData.value?.imageUrl,
+                                userData.value?.age,
+                                userData.value?.gender
+                            ),
+                            UserProfile(
+                                chatPartner.userId,
+                                chatPartner.name,
+                                chatPartner.imageUrl,
+                                chatPartner.age,
+                                chatPartner.gender,
 
+                            )
+                        )
+                        db.collection(MY_PROFILES).document(id)
+                            .set(profile)
+                    }
+                }
+                .addOnFailureListener {
+                    handleException(it)
+                }
+        }
     }
 
 }

@@ -11,6 +11,7 @@ data class UserData(
     var description :String?= "",
     var requirement :String?= "",
     var imageUrl : String?= "",
+    var gender : String?=""
 ){
     fun toMap() = mapOf(
         "userId" to userId,
@@ -29,12 +30,15 @@ data class UserData(
 
 data class ChatProfileData(
     val profileId : String? = "",
-    val user1 : CurrentUserProfile = CurrentUserProfile()
+    val user1 : UserProfile = UserProfile(),
+    val user2 : UserProfile = UserProfile()
 )
 
-data class CurrentUserProfile(
+data class UserProfile(
     val userId: String? = "",
     val name: String? ="",
-    val imageUrl: String? =""
+    val imageUrl: String? ="",
+    val age: String? ="",
+    val gender: String? =""
 
 )

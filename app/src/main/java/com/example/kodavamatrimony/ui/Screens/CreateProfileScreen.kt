@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -55,6 +56,7 @@ import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.example.kodavamatrimony.ui.Utility.CommonImage
 import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
 import com.example.kodavamatrimony.ui.Utility.navigateTo
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,6 +113,9 @@ fun CreateProfileScreen(
             val descriptionState = remember {
                 mutableStateOf(TextFieldValue())
             }
+            val genderState = remember {
+                mutableStateOf(TextFieldValue())
+            }
             val requirementsState = remember {
                 mutableStateOf(TextFieldValue())
             }
@@ -136,6 +141,28 @@ fun CreateProfileScreen(
  //Add profile pic
             
             ProfileImage(imageUrl = imageUrl, viewModel = viewModel)
+
+            OutlinedTextField(
+                value = genderState.value,
+                onValueChange ={
+                    genderState.value = it
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                placeholder = {
+                    Text(text = "Mandatory Field",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                },
+                label = {
+                    Text(text = "Gender",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                }
+            )
 
             OutlinedTextField(
                 value = nameState.value,
@@ -292,20 +319,22 @@ fun CreateProfileScreen(
                     )
                 }
             )
+ //Called here
             Button(
                 onClick = {
-
                     viewModel.createOrUpdateProfile(
-                        nameState.value.text,
-                        familyNameState.value.text,
-                        numberState.value.text,
-                        fatherNameState.value.text,
-                        motherNameState.value.text,
-                        ageState.value.text,
-                        descriptionState.value.text,
-
+                        name= nameState.value.text,
+                        familyName=familyNameState.value.text,
+                        number=numberState.value.text,
+                        fathersName = fatherNameState.value.text,
+                        mothersName = motherNameState.value.text,
+                        age=ageState.value.text,
+                        description = descriptionState.value.text,
+                        requirement = requirementsState.value.text,
+                        gender=genderState.value.text.uppercase(Locale.ROOT)
                     )
                     navigateTo(navController,DestinationScreen.HomeScreen.route)
+                    viewModel.onAddedProfile(nameState.value.text)
                 },
                 modifier = Modifier
                     .padding(8.dp)

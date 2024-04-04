@@ -1,15 +1,22 @@
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,6 +33,9 @@ fun SearchScreen(
     navController : NavController,
     viewModel : KmViewModel
 ) {
+    val pfId = remember {
+        mutableStateOf("")
+    }
     Scaffold(
         bottomBar = {
             BottomNavigationMenu(
@@ -44,19 +54,29 @@ fun SearchScreen(
                 )
             )
         }
-    ) {
+    ) {PaddingValues->
         if(viewModel.inProgressProfile.value){
             CommonProgressBar()
         }
         else{
+
+  // Pass this in onClick in icon clickabe for bookmark
+
             val profiles = viewModel.profiles.value
+            val userData = viewModel.userData.value
             val onSaveProfile: (String)->Unit ={
-                viewModel.onSaveProfile(it)
+                viewModel.onAddedProfile(it)
             }
+            val showDialog = remember {
+                mutableStateOf(false)
+            }
+            val onFabClick :()->Unit = { showDialog.value = true}
+            val onDismiss :()->Unit = { showDialog.value = false}
             if(profiles.isEmpty()){
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(PaddingValues),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -64,15 +84,48 @@ fun SearchScreen(
                 }
             }
         }
-        
 
 
+    }
+}
 
-
-
-
-        LazyColumn(contentPadding = it) {
-
-        }
+@Composable
+fun FAB(
+    showDialog : Boolean,
+    onFabClick :()-> Unit,
+    onDismiss : ()-> Unit,
+    onSaveProfile : (String)->Unit
+){
+    val addProfileMember = remember {
+        mutableStateOf("")
+    }
+    if(showDialog){
+        AlertDialog(
+            onDismissRequest = {
+                onDismiss.invoke()
+            addProfileMember.value=""
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onSaveProfile(addProfileMember.value)
+                    }) {
+                    Text(text = "Save")
+                }
+            },
+            title = {
+                Text(text = "Save Profile")
+            },
+            text = {
+                OutlinedTextField(
+                    value = addProfileMember.value,
+                    onValueChange = {
+                        addProfileMember.value = it
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(MaterialTheme.colorScheme.onSecondary)
+                )
+            },
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     }
 }
