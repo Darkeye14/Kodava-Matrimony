@@ -217,7 +217,7 @@ class KmViewModel @Inject constructor(
         val imageRef = storageRef.child("images/$uuid")
         val uploadTask = imageRef
             .putFile(uri)
-            uploadTask.addOnSuccessListener {
+        uploadTask.addOnSuccessListener {
                 val result = it.metadata
                     ?.reference
                     ?.downloadUrl
