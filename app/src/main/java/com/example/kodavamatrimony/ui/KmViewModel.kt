@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.kodavamatrimony.data.SignUpEvent
+import com.example.kodavamatrimony.data.ChatProfileData
 import com.example.kodavamatrimony.data.USER_NODE
 import com.example.kodavamatrimony.data.UserData
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
@@ -29,10 +30,12 @@ class KmViewModel @Inject constructor(
 
 
     var inProgress = mutableStateOf(false)
+    var inProgressProfile = mutableStateOf(false)
     val eventMutableState = mutableStateOf<SignUpEvent<String?>?>(null)
     var signIn = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
     val creatingProfile = mutableStateOf(false)
+    val profiles = mutableStateOf<List<ChatProfileData>>(listOf())
 
     init {
         val currentUser = auth.currentUser
@@ -224,6 +227,10 @@ class KmViewModel @Inject constructor(
                 .addOnFailureListener{
                     handleException(it)
                 }
+    }
+
+    fun onSaveProfile(it: String) {
+
     }
 
 }

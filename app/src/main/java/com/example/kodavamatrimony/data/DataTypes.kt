@@ -26,3 +26,15 @@ data class UserData(
 
     )
 }
+
+data class ChatProfileData(
+    val profileId : String? = "",
+    val user1 : CurrentUserProfile = CurrentUserProfile()
+)
+
+data class CurrentUserProfile(
+    val userId: String? = "",
+    val name: String? ="",
+    val imageUrl: String? =""
+
+)

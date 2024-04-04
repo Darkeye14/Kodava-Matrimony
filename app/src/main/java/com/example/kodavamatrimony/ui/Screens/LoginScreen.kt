@@ -53,9 +53,7 @@ fun LoginScreen(
                 .background(color = MaterialTheme.colorScheme.primaryContainer),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            CheckSignedIn(viewModel = viewModel,
-                navController = navController
-            )
+
 
             val emailState = remember {
                 mutableStateOf(TextFieldValue())

@@ -34,7 +34,7 @@ fun KmNavigation() {
             HomeScreen(navController)
         }
         composable(DestinationScreen.SearchScreen.route){
-            SearchScreen(navController)
+            SearchScreen(navController,viewModel)
         }
         composable(DestinationScreen.Login.route){
             LoginScreen(viewModel,navController)

@@ -51,8 +51,10 @@ import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationItem
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationMenu
+import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.example.kodavamatrimony.ui.Utility.CommonImage
 import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
+import com.example.kodavamatrimony.ui.Utility.navigateTo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -303,6 +305,7 @@ fun CreateProfileScreen(
                         descriptionState.value.text,
 
                     )
+                    navigateTo(navController,DestinationScreen.HomeScreen.route)
                 },
                 modifier = Modifier
                     .padding(8.dp)
