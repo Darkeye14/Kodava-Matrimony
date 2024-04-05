@@ -151,7 +151,7 @@ fun CreateProfileScreen(
                     imeAction = ImeAction.Done
                 ),
                 placeholder = {
-                    Text(text = "Mandatory Field",
+                    Text(text = "(Boy/Girl) *Mandatory Field",
                         modifier = Modifier
                             .padding(8.dp)
                     )

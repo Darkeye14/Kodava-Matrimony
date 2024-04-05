@@ -12,6 +12,7 @@ import com.example.kodavamatrimony.ui.Screens.HomeScreen
 import com.example.kodavamatrimony.ui.Screens.LoginScreen
 import com.example.kodavamatrimony.ui.Screens.MyProfilesSscreen
 import com.example.kodavamatrimony.ui.Screens.SignUpScreen
+import com.example.kodavamatrimony.ui.Screens.SingleProfileScreen
 import com.example.kodavamatrimony.ui.Screens.SplashScreen
 
 @Composable
@@ -33,6 +34,9 @@ fun KmNavigation() {
         }
         composable(DestinationScreen.HomeScreen.route){
             HomeScreen(navController)
+        }
+        composable(DestinationScreen.SingleProfileScreen.route){
+            SingleProfileScreen()
         }
         composable(DestinationScreen.MyProfilesScreen.route){
            MyProfilesSscreen(navController,viewModel)

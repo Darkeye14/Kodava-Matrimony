@@ -107,12 +107,12 @@ fun LoginScreen(
                 onClick = {
                     viewModel.login(emailState.value.text,passwordState.value.text,navController)
                     //careful
-                    navigateTo(navController, DestinationScreen.HomeScreen.route)
+
                 },
                 modifier = Modifier
                     .padding(8.dp)
             ) {
-                Text(text = "SIGN UP")
+                Text(text = "Login")
             }
             Text(
                 text = "Already a user ? Go to SignUp",

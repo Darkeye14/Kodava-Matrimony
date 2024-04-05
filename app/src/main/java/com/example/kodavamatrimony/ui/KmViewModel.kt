@@ -155,6 +155,7 @@ class KmViewModel @Inject constructor(
                     val user = value.toObject<UserData>()
                     userData.value = user
                     inProgress.value = false
+                    populateProfiles()
                 }
             }
     }
@@ -280,11 +281,21 @@ class KmViewModel @Inject constructor(
 
     ){
         inProgressProfile.value = true
-//        db.collection(MY_PROFILES).whereEqualTo(
-//            Filter.or(
-//
-//            )
-//        )
+        db.collection(MY_PROFILES).where(
+            Filter.or(
+                Filter.equalTo("user1.userId",userData.value?.userId),
+                Filter.equalTo("user2.userId",userData.value?.userId)
+
+            )
+        ).addSnapshotListener{value,error->
+// smthin here
+            if(value !=null){
+                profiles.value = value.documents.mapNotNull {
+                    it.toObject<ChatProfileData>()
+                }
+                inProgressProfile.value = false
+            }
+        }
     }
 
 }

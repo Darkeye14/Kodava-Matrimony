@@ -4,11 +4,21 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -16,11 +26,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import com.example.kodavamatrimony.data.UserProfile
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 
@@ -89,3 +105,61 @@ fun CommonImage(
     )
 }
 
+@Composable
+fun ProfileCard(
+    profile : UserProfile,
+    onItemClick: ()->Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .padding(12.dp)
+            .clickable {
+                onItemClick.invoke()
+            },
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
+    ) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+        ) {
+            CommonImage(
+                data = profile.imageUrl,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(162.dp)
+                    .padding(12.dp)
+                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                    .clip(RectangleShape)
+   // backgrnd
+            )
+
+            Text(
+                text = profile.name?: "Anonymous",
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                modifier = Modifier
+                    .padding(12.dp)
+            )
+
+           Row(modifier = Modifier.fillMaxWidth(),
+               horizontalArrangement = Arrangement.SpaceBetween
+           ) {
+               Text(
+                   text = profile.gender?: "Gender Not Mentioned",
+                   fontWeight = FontWeight.SemiBold,
+                   modifier = Modifier
+                       .padding(12.dp)
+               )
+               Text(
+                   text = profile.age?: "Age Not Mentioned",
+                   fontWeight = FontWeight.SemiBold,
+                   modifier = Modifier
+                       .padding(12.dp)
+               )
+           }
+        }
+    }
+}
