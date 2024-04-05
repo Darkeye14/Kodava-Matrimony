@@ -96,6 +96,11 @@ fun SearchScreen(
                             profile.profileId?.let {
                                 navigateTo(navController, DestinationScreen.SingleProfileScreen.createRoute(id = it))
                             }
+                        },
+                        onBmkClick = {
+                            profile.profileId?.let {
+                                viewModel.onBookmark(it)
+                            }
                         }
                     )
                 }

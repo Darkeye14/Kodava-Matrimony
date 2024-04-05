@@ -9,6 +9,8 @@ import com.example.kodavamatrimony.data.AUTH
 import com.example.kodavamatrimony.data.SignUpEvent
 import com.example.kodavamatrimony.data.ChatProfileData
 import com.example.kodavamatrimony.data.ALL_PROFILES
+import com.example.kodavamatrimony.data.BOOKMARK
+import com.example.kodavamatrimony.data.Bookmark
 import com.example.kodavamatrimony.data.USER_NODE
 import com.example.kodavamatrimony.data.UserAuthData
 import com.example.kodavamatrimony.data.UserData
@@ -334,6 +336,17 @@ class KmViewModel @Inject constructor(
             }
         }
     }
+
+    fun onBookmark(
+        bookmarkId :String
+    ){
+       val  bookmark = Bookmark(
+           userAuthData.value?.userId,
+           bookmarkId
+       )
+        db.collection(AUTH).document(bookmarkId).collection(BOOKMARK).document().set(bookmark)
+    }
+
 
 }
 

@@ -42,9 +42,9 @@ import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 
 fun navigateTo(
     navController: NavController,
-    route : String
-){
-    navController.navigate(route){
+    route: String
+) {
+    navController.navigate(route) {
         popUpTo(route)
         launchSingleTop = true
     }
@@ -66,23 +66,23 @@ fun CommonProgressBar() {
 }
 
 @Composable
-fun CheckSignedIn(viewModel : KmViewModel,
-                  navController: NavController
+fun CheckSignedIn(
+    viewModel: KmViewModel,
+    navController: NavController
 ) {
-    val alreadySignedIn = remember{ mutableStateOf(false) }
+    val alreadySignedIn = remember { mutableStateOf(false) }
     val signIn = viewModel.signIn.value
-    if(signIn && !alreadySignedIn.value ){
-        alreadySignedIn.value=true
+    if (signIn && !alreadySignedIn.value) {
+        alreadySignedIn.value = true
         LaunchedEffect(key1 = Unit) {
-            navController.navigate(DestinationScreen.HomeScreen.route){
+            navController.navigate(DestinationScreen.HomeScreen.route) {
                 popUpTo(0)
             }
         }
 
-    }
-    else if(!signIn){
+    } else if (!signIn) {
         LaunchedEffect(key1 = Unit) {
-            navController.navigate(DestinationScreen.SignUp.route){
+            navController.navigate(DestinationScreen.SignUp.route) {
                 popUpTo(0)
             }
         }
@@ -92,7 +92,7 @@ fun CheckSignedIn(viewModel : KmViewModel,
 
 @Composable
 fun CommonImage(
-    data :String?,
+    data: String?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop
 ) {
@@ -107,14 +107,15 @@ fun CommonImage(
 
 @Composable
 fun ProfileCard(
-    profile : UserProfile,
-    onItemClick: ()->Unit,
+    profile: UserProfile,
+    onItemClick: () -> Unit,
+    onBmkClick : ()->Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(300.dp)
+            .height(312.dp)
             .padding(12.dp)
             .clickable {
                 onItemClick.invoke()
@@ -133,33 +134,43 @@ fun ProfileCard(
                     .padding(12.dp)
                     .background(MaterialTheme.colorScheme.surfaceContainerLow)
                     .clip(RectangleShape)
-   // backgrnd
+                // backgrnd
             )
 
             Text(
-                text = profile.name?: "Anonymous",
+                text = profile.name ?: "Anonymous",
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 modifier = Modifier
                     .padding(12.dp)
             )
 
-           Row(modifier = Modifier.fillMaxWidth(),
-               horizontalArrangement = Arrangement.SpaceBetween
-           ) {
-               Text(
-                   text = profile.gender?: "Gender Not Mentioned",
-                   fontWeight = FontWeight.SemiBold,
-                   modifier = Modifier
-                       .padding(12.dp)
-               )
-               Text(
-                   text = profile.age?: "Age Not Mentioned",
-                   fontWeight = FontWeight.SemiBold,
-                   modifier = Modifier
-                       .padding(12.dp)
-               )
-           }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = profile.gender ?: "Gender Not Mentioned",
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(12.dp)
+                )
+                Text(
+                    text = profile.age ?: "Age Not Mentioned",
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(12.dp)
+                )
+                Text(
+                    text = "Save Profile",
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .clickable {
+                            onBmkClick.invoke()
+                        }
+                )
+            }
+
         }
     }
 }

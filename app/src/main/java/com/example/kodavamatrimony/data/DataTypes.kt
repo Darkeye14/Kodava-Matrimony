@@ -53,3 +53,8 @@ data class UserProfile(
     val gender: String? =""
 
 )
+data class Bookmark(
+    val userId: String? = "",
+    val bmkId: String? ="",
+
+)
