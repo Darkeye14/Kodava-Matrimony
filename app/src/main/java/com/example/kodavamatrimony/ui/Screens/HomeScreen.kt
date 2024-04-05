@@ -30,10 +30,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ){
     
-    BottomNavigationMenu(
-        selectedItem = BottomNavigationItem.HOMELIST,
-        navController = navController
-    )
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(

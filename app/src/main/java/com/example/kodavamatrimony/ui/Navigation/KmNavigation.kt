@@ -36,7 +36,11 @@ fun KmNavigation() {
             HomeScreen(navController)
         }
         composable(DestinationScreen.SingleProfileScreen.route){
-            SingleProfileScreen()
+            val profileId = it.arguments?.getString("profileId")
+            profileId?.let {
+                SingleProfileScreen(navController,viewModel, profileId)
+            }
+
         }
         composable(DestinationScreen.MyProfilesScreen.route){
            MyProfilesSscreen(navController,viewModel)

@@ -35,10 +35,6 @@ fun MyProfilesSscreen(
     viewModel: KmViewModel
 ) {
 
-    BottomNavigationMenu(
-        selectedItem = BottomNavigationItem.HOMELIST,
-        navController = navController
-    )
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -84,15 +80,15 @@ fun MyProfilesSscreen(
                 items(profiles){ profile ->
                     val profileUser =
                         if(profile.user1.userId ==userData?.userId){
-                        profile.user2
+                            profile.user2
                         } else{
-                               profile.user1
-                    }
+                            profile.user1
+                        }
                     ProfileCard(
                         profile = profileUser,
                         onItemClick = {
                             profile.profileId?.let {
-                                navigateTo(navController,DestinationScreen.SingleProfileScreen.createRoute(id = it))
+                                navigateTo(navController, DestinationScreen.SingleProfileScreen.createRoute(id = it))
                             }
                         }
                     )

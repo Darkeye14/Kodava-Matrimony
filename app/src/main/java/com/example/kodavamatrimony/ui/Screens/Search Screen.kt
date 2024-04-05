@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -27,7 +29,10 @@ import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationItem
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationMenu
+import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
+import com.example.kodavamatrimony.ui.Utility.ProfileCard
+import com.example.kodavamatrimony.ui.Utility.navigateTo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,16 +40,8 @@ fun SearchScreen(
     navController : NavController,
     viewModel : KmViewModel
 ) {
-    val pfId = remember {
-        mutableStateOf("")
-    }
+
     Scaffold(
-        bottomBar = {
-            BottomNavigationMenu(
-                selectedItem = BottomNavigationItem.SEARCHLIST,
-                navController = navController
-            )
-        },
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -55,40 +52,55 @@ fun SearchScreen(
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
+        },
+        bottomBar = {
+            BottomNavigationMenu(
+                selectedItem = BottomNavigationItem.SEARCHLIST,
+                navController = navController
+            )
         }
-    ) {PaddingValues->
+    ) {
         if(viewModel.inProgressProfile.value){
             CommonProgressBar()
         }
-        else{
-
-  // Pass this in onClick in icon clickabe for bookmark
-
-            val profiles = viewModel.profiles.value
-            val userData = viewModel.userData.value
-            val onSaveProfile: (String)->Unit ={
-                viewModel.onAddedProfile(it)
-            }
-            val showDialog = remember {
-                mutableStateOf(false)
-            }
-            val onFabClick :()->Unit = { showDialog.value = true}
-            val onDismiss :()->Unit = { showDialog.value = false}
+        val profiles = viewModel.profiles.value
+        val userData = viewModel.userData.value
+        if (profiles.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(PaddingValues)
+                    .padding(it)
                     .background(color = MaterialTheme.colorScheme.primaryContainer),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (profiles.isEmpty()){
-                    Text(text = "No Profiles Available")
+                Text(text = "No Profiles Available")
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+                    .background(color = MaterialTheme.colorScheme.primaryContainer)
+            ) {
+                items(profiles){ profile ->
+                    val profileUser =
+                        if(profile.user1.userId ==userData?.userId){
+                            profile.user2
+                        } else{
+                            profile.user1
+                        }
+                    ProfileCard(
+                        profile = profileUser,
+                        onItemClick = {
+                            profile.profileId?.let {
+                                navigateTo(navController, DestinationScreen.SingleProfileScreen.createRoute(id = it))
+                            }
+                        }
+                    )
                 }
             }
         }
-
-
     }
 }
 
