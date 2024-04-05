@@ -77,16 +77,11 @@ fun SavedScreen(
                     .background(color = MaterialTheme.colorScheme.primaryContainer)
             ) {
                 items(profiles){ profile ->
-                    val profileUser =
-                        if(profile.user1.userId ==userData?.userId){
-                            profile.user2
-                        } else{
-                            profile.user1
-                        }
+
                     ProfileCard(
-                        profile = profileUser,
+                        profile = profile,
                         onItemClick = {
-                            profile.profileId?.let {
+                            profile.userId?.let {
                                 navigateTo(navController, DestinationScreen.SingleProfileScreen.createRoute(id = it))
                             }
                         },

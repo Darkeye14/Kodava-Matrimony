@@ -44,7 +44,7 @@ class KmViewModel @Inject constructor(
     val userData = mutableStateOf<UserData?>(null)
     val userAuthData = mutableStateOf<UserAuthData?>(null)
     val creatingProfile = mutableStateOf(false)
-    val profiles = mutableStateOf<List<ChatProfileData>>(listOf())
+    val profiles = mutableStateOf<List<UserData>>(listOf())
 
     init {
         val currentUser = auth.currentUser
@@ -144,7 +144,7 @@ class KmViewModel @Inject constructor(
         imageUrl: String?=null,
         gender : String?= null
     ){
-        val uid = auth.currentUser?.uid
+        val uid  = UUID.randomUUID().toString()
         val userData = UserData(
             userId = uid,
             name = name ?:userData.value?.name ,
@@ -320,17 +320,12 @@ class KmViewModel @Inject constructor(
 
     ){
         inProgressProfile.value = true
-        db.collection(ALL_PROFILES).where(
-            Filter.or(
-                Filter.equalTo("user1.userId",userData.value?.userId),
-                Filter.equalTo("user2.userId",userData.value?.userId)
-
-            )
-        ).addSnapshotListener{value,error->
+        db.collection(USER_NODE)
+            .addSnapshotListener{value,error->
 // smthin here
-            if(value !=null){
+            if(value !=null) {
                 profiles.value = value.documents.mapNotNull {
-                    it.toObject<ChatProfileData>()
+                    it.toObject<UserData>()
                 }
                 inProgressProfile.value = false
             }

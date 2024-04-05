@@ -36,6 +36,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import com.example.kodavamatrimony.data.UserData
 import com.example.kodavamatrimony.data.UserProfile
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
@@ -107,7 +108,7 @@ fun CommonImage(
 
 @Composable
 fun ProfileCard(
-    profile: UserProfile,
+    profile: UserData,
     onItemClick: () -> Unit,
     onBmkClick : ()->Unit,
     modifier: Modifier = Modifier

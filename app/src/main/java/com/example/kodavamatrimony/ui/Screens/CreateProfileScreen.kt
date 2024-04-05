@@ -286,9 +286,6 @@ fun CreateProfileScreen(
                             .padding(8.dp)
                     )
                 },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
-                ),
                 singleLine = false,
                 label = {
                     Text(text = "Description",
@@ -309,9 +306,7 @@ fun CreateProfileScreen(
                     )
                 },
                 singleLine = false,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
-                ),
+
                 label = {
                     Text(text = "Requirements",
                         modifier = Modifier
