@@ -56,7 +56,7 @@ fun SavedScreen(
         if(viewModel.inProgressProfile.value){
             CommonProgressBar()
         }
-        val profiles = viewModel.myBookmarks.value
+        val profiles = viewModel.myBookmarksData.value
         if (profiles.isEmpty()) {
             Column(
                 modifier = Modifier

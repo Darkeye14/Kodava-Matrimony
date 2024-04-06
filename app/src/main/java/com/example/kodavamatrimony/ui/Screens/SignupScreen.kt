@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +25,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,7 +33,6 @@ import androidx.navigation.NavController
 import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
-import com.example.kodavamatrimony.ui.Utility.CheckSignedIn
 import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 
@@ -52,13 +53,8 @@ fun SignUpScreen(navController: NavController ,
                 .background(color = MaterialTheme.colorScheme.primaryContainer),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            val nameState = remember {
-                mutableStateOf(TextFieldValue())
-            }
+
             val emailState = remember {
-                mutableStateOf(TextFieldValue())
-            }
-            val numberState = remember {
                 mutableStateOf(TextFieldValue())
             }
             val passwordState = remember {
@@ -79,35 +75,15 @@ fun SignUpScreen(navController: NavController ,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(8.dp)
             )
-            OutlinedTextField(
-                value = nameState.value,
-                onValueChange ={
-                    nameState.value = it
-                },
-                label = {
-                    Text(text = "Name",
-                        modifier = Modifier
-                            .padding(8.dp)
-                    )
-                }
-            )
-            OutlinedTextField(
-                value = numberState.value,
-                onValueChange ={
-                    numberState.value = it
-                },
-                label = {
-                    Text(text = "Number",
-                        modifier = Modifier
-                            .padding(8.dp)
-                    )
-                }
-            )
+
             OutlinedTextField(
                 value = emailState.value,
                 onValueChange ={
                     emailState.value = it
                 },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
                 label = {
                     Text(text = "Email",
                         modifier = Modifier
@@ -120,6 +96,9 @@ fun SignUpScreen(navController: NavController ,
                 onValueChange ={
                     passwordState.value = it
                 },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
                 label = {
                     Text(text = "Password",
                         modifier = Modifier

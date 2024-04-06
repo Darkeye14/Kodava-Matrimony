@@ -31,7 +31,6 @@ import androidx.navigation.NavController
 import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
-import com.example.kodavamatrimony.ui.Utility.CheckSignedIn
 import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 
