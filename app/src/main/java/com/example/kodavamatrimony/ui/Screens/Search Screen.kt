@@ -64,7 +64,6 @@ fun SearchScreen(
             CommonProgressBar()
         }
         val profiles = viewModel.profiles.value
-        val userData = viewModel.userData.value
         if (profiles.isEmpty()) {
             Column(
                 modifier = Modifier

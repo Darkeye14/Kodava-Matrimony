@@ -11,6 +11,7 @@ import com.example.kodavamatrimony.ui.Screens.CreateProfileScreen
 import com.example.kodavamatrimony.ui.Screens.HomeScreen
 import com.example.kodavamatrimony.ui.Screens.LoginScreen
 import com.example.kodavamatrimony.ui.Screens.MyProfilesSscreen
+import com.example.kodavamatrimony.ui.Screens.SavedScreen
 import com.example.kodavamatrimony.ui.Screens.SignUpScreen
 import com.example.kodavamatrimony.ui.Screens.SingleProfileScreen
 import com.example.kodavamatrimony.ui.Screens.SplashScreen
@@ -33,7 +34,7 @@ fun KmNavigation() {
             SignUpScreen(navController,viewModel)
         }
         composable(DestinationScreen.HomeScreen.route){
-            HomeScreen(navController)
+            HomeScreen(navController,viewModel)
         }
         composable(DestinationScreen.SingleProfileScreen.route){
             val profileId = it.arguments?.getString("profileId")
@@ -50,6 +51,9 @@ fun KmNavigation() {
         }
         composable(DestinationScreen.Login.route){
             LoginScreen(viewModel,navController)
+        }
+        composable(DestinationScreen.SavedScreen.route){
+            SavedScreen(navController = navController, viewModel = viewModel)
         }
         composable(DestinationScreen.CreateProfileScreen.route){
             CreateProfileScreen(navController = navController, viewModel = viewModel)

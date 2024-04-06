@@ -7,14 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.kodavamatrimony.data.AUTH
 import com.example.kodavamatrimony.data.SignUpEvent
-import com.example.kodavamatrimony.data.ChatProfileData
-import com.example.kodavamatrimony.data.ALL_PROFILES
 import com.example.kodavamatrimony.data.BOOKMARK
 import com.example.kodavamatrimony.data.Bookmark
 import com.example.kodavamatrimony.data.USER_NODE
 import com.example.kodavamatrimony.data.UserAuthData
 import com.example.kodavamatrimony.data.UserData
-import com.example.kodavamatrimony.data.UserProfile
+
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 import com.google.firebase.auth.FirebaseAuth
@@ -42,9 +40,12 @@ class KmViewModel @Inject constructor(
     val eventMutableState = mutableStateOf<SignUpEvent<String?>?>(null)
     var signIn = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
+    val bmkData = mutableStateOf<Bookmark?>(null)
     val userAuthData = mutableStateOf<UserAuthData?>(null)
     val creatingProfile = mutableStateOf(false)
     val profiles = mutableStateOf<List<UserData>>(listOf())
+    val myProfiles = mutableStateOf<List<UserData>>(listOf())
+    val myBookmarks = mutableStateOf<List<UserData>>(listOf())
 
     init {
         val currentUser = auth.currentUser
@@ -69,17 +70,23 @@ class KmViewModel @Inject constructor(
             .addOnSuccessListener {
                 if(it.isEmpty){
                     auth.createUserWithEmailAndPassword(email,password)
-                        .addOnCompleteListener {
+                        .addOnSuccessListener {
     ////
+
                             navigateTo(navController,DestinationScreen.HomeScreen.route)
                     }
+    //Failure Listener
                 }else{
                     handleException(customMessage = "email already exist")
                         inProgress.value=false
                 }
             }
+            .addOnFailureListener {
+                handleException(it)
+                return@addOnFailureListener
+            }
         auth.createUserWithEmailAndPassword(email,password)
-            .addOnCompleteListener {
+            .addOnCompleteListener {                    //gyanpg@gmail.com   gyan12345
                 createOrUpdateAuth(email, password)
     ////
                 navigateTo(navController,DestinationScreen.HomeScreen.route)
@@ -147,6 +154,7 @@ class KmViewModel @Inject constructor(
         val uid  = UUID.randomUUID().toString()
         val userData = UserData(
             userId = uid,
+            authId = auth.currentUser?.uid,
             name = name ?:userData.value?.name ,
             familyName = familyName?:userData.value?.name,
             number = number?:userData.value?.number,
@@ -171,6 +179,7 @@ class KmViewModel @Inject constructor(
                         db.collection(USER_NODE)
                             .add(userData)
                         getUserData(uid)
+                        getMyProfilesData()
                         inProgress.value = false
                         creatingProfile.value = false
                     }
@@ -197,6 +206,44 @@ class KmViewModel @Inject constructor(
                     populateProfiles()
                 }
             }
+    }
+     fun getMyProfilesData() {
+        val uid = auth.currentUser?.uid
+        inProgress.value=true
+        if (uid != null) {
+            db.collection(USER_NODE)
+                .document(uid)
+                .addSnapshotListener { value, error ->
+                    if(error !=null){
+                        handleException(error,"cannot retrieve user")
+                    }
+                    if(value!=null){
+                        val user = value.toObject<UserData>()
+                        userData.value = user
+                        inProgress.value = false
+                        onCreateProfile()
+                    }
+                }
+        }
+    }
+    fun getMyBookmarksData() {
+        val uid = auth.currentUser?.uid
+        inProgress.value=true
+        if (uid != null) {
+            db.collection(BOOKMARK)
+                .document(uid)
+                .addSnapshotListener { value, error ->
+                    if(error !=null){
+                        handleException(error,"cannot retrieve user")
+                    }
+                    if(value!=null){
+                        val user = value.toObject<Bookmark>()
+                        bmkData.value = user
+                        inProgress.value = false
+                        onShowBookmark()
+                    }
+                }
+        }
     }
 
     fun login(
@@ -285,29 +332,7 @@ class KmViewModel @Inject constructor(
                 .addOnSuccessListener {
                     if(it.isEmpty){
                         handleException(customMessage = "profile not found")
-                    }else{
-                       val chatPartner = it.toObjects<UserData>()[0]
-                        val id = db.collection(ALL_PROFILES).document().id
-                        val profile = ChatProfileData(
-                            profileId = id,
-                            UserProfile(
-                                userData.value?.userId,
-                                userData.value?.name,
-                                userData.value?.imageUrl,
-                                userData.value?.age,
-                                userData.value?.gender
-                            ),
-                            UserProfile(
-                                chatPartner.userId,
-                                chatPartner.name,
-                                chatPartner.imageUrl,
-                                chatPartner.age,
-                                chatPartner.gender,
 
-                            )
-                        )
-                        db.collection(ALL_PROFILES).document(id)
-                            .set(profile)
                     }
                 }
                 .addOnFailureListener {
@@ -335,11 +360,48 @@ class KmViewModel @Inject constructor(
     fun onBookmark(
         bookmarkId :String
     ){
+        val authId = auth.currentUser?.uid
        val  bookmark = Bookmark(
-           userAuthData.value?.userId,
+           authId,
            bookmarkId
        )
-        db.collection(AUTH).document(bookmarkId).collection(BOOKMARK).document().set(bookmark)
+        db.collection(BOOKMARK).document().set(bookmark)
+    }
+
+    fun onShowBookmark(){
+        val currentAuthId = bmkData.value?.authenticationId
+        inProgressProfile.value = true
+        db.collection(USER_NODE)
+            .whereEqualTo("authId",currentAuthId)
+            .addSnapshotListener{value,error->
+                if(error !=null){
+                    handleException(error,"cannot retrieve user")
+                }
+                if(value !=null) {
+                    myBookmarks.value = value.documents.mapNotNull {
+                        it.toObject<UserData>()
+                    }
+                    inProgressProfile.value = false
+                }
+        }
+
+    }
+    fun onCreateProfile(){
+        val currentAuthId =auth.currentUser?.uid
+        inProgressProfile.value = true
+        db.collection(USER_NODE)
+            .whereEqualTo("authId",currentAuthId)
+            .addSnapshotListener{value,error->
+            if(error !=null){
+                handleException(error,"cannot retrieve user")
+            }
+            if(value !=null) {
+                myProfiles.value = value.documents.mapNotNull {
+                    it.toObject<UserData>()
+                }
+                inProgressProfile.value = false
+            }
+        }
     }
 
 

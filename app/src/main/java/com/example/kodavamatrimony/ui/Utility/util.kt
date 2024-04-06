@@ -10,10 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,13 +27,9 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.example.kodavamatrimony.data.UserData
-import com.example.kodavamatrimony.data.UserProfile
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 
@@ -151,13 +143,13 @@ fun ProfileCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = profile.gender ?: "Gender Not Mentioned",
+                    text = profile.gender ?: "-Gender-",
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
                         .padding(12.dp)
                 )
                 Text(
-                    text = profile.age ?: "Age Not Mentioned",
+                    text = profile.age ?: "-Age-",
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
                         .padding(12.dp)

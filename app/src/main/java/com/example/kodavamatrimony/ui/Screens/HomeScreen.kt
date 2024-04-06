@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.example.kodavamatrimony.R
+import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationItem
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationMenu
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
@@ -27,6 +28,7 @@ import com.example.kodavamatrimony.ui.Utility.navigateTo
 @Composable
 fun HomeScreen(
     navController: NavController,
+    viewModel: KmViewModel,
     modifier: Modifier = Modifier
 ){
     
@@ -59,7 +61,8 @@ fun HomeScreen(
             ) {
                 Button(
                     onClick = {
-                              navigateTo(navController,DestinationScreen.MyProfilesScreen.route)
+                        viewModel.getMyProfilesData()
+                        navigateTo(navController,DestinationScreen.MyProfilesScreen.route)
                     },
                 ) {
                     Text(text = "My Profiles")
@@ -71,7 +74,10 @@ fun HomeScreen(
                 }
 
                 Button(
-                    onClick = { },
+                    onClick = {
+                        viewModel.getMyBookmarksData()
+                        navigateTo(navController,DestinationScreen.SavedScreen.route)
+                    },
                 ) {
                     Text(text = stringResource(R.string.saved_profile))
                 }

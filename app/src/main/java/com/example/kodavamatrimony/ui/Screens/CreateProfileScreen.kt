@@ -379,6 +379,7 @@ fun ProfileImage(
 
             ) {
                 CommonImage(data = imageUrl)
+
             }
             Text(text = "Change Profile Picture")
         }

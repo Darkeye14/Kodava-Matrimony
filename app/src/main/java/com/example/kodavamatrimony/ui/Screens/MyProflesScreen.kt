@@ -57,8 +57,7 @@ fun MyProfilesSscreen(
         if(viewModel.inProgressProfile.value){
             CommonProgressBar()
         }
-        val profiles = viewModel.profiles.value
-        val userData = viewModel.userData.value
+        val profiles = viewModel.myProfiles.value
         if (profiles.isEmpty()) {
             Column(
                 modifier = Modifier
@@ -87,9 +86,7 @@ fun MyProfilesSscreen(
                             }
                         },
                         onBmkClick = {
-                            profile.userId?.let {
-                                viewModel.onBookmark(it)
-                            }
+                            //nothing
                         }
                     )
                 }

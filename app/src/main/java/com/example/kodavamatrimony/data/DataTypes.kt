@@ -2,6 +2,7 @@ package com.example.kodavamatrimony.data
 
 data class UserData(
     var userId : String?= null,
+    var authId : String?= null,
     var name : String?= null,
     var familyName : String?= null,
     var number : String?= null,
@@ -15,6 +16,7 @@ data class UserData(
 ){
     fun toMap() = mapOf(
         "userId" to userId,
+        "authId" to authId,
         "name" to name,
         "familyName" to familyName,
         "number" to number,
@@ -39,22 +41,8 @@ data class UserAuthData(
     )
 }
 
-data class ChatProfileData(
-    val profileId : String? = "",
-    val user1 : UserProfile = UserProfile(),
-    val user2 : UserProfile = UserProfile()
-)
-
-data class UserProfile(
-    val userId: String? = "",
-    val name: String? =null,
-    val imageUrl: String? =null,
-    val age: String? =null,
-    val gender: String? =null
-
-)
 data class Bookmark(
-    val userId: String? = null,
+    val authenticationId: String? = null,
     val bmkId: String? =null,
 
-)
+    )
