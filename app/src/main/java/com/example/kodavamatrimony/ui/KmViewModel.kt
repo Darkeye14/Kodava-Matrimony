@@ -6,21 +6,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.kodavamatrimony.data.AUTH
-import com.example.kodavamatrimony.data.SignUpEvent
 import com.example.kodavamatrimony.data.BOOKMARK
 import com.example.kodavamatrimony.data.Bookmark
+import com.example.kodavamatrimony.data.SignUpEvent
 import com.example.kodavamatrimony.data.USER_NODE
 import com.example.kodavamatrimony.data.UserAuthData
 import com.example.kodavamatrimony.data.UserData
-
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
-import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firestore.v1.StructuredQuery
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import javax.inject.Inject
@@ -40,12 +39,14 @@ class KmViewModel @Inject constructor(
     val eventMutableState = mutableStateOf<SignUpEvent<String?>?>(null)
     var signIn = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
-    val bmkData = mutableStateOf<Bookmark?>(null)
+    val bmkData = mutableStateOf<UserData?>(null)
+
     val userAuthData = mutableStateOf<UserAuthData?>(null)
     val creatingProfile = mutableStateOf(false)
     val profiles = mutableStateOf<List<UserData>>(listOf())
     val myProfiles = mutableStateOf<List<UserData>>(listOf())
     val myBookmarks = mutableStateOf<List<UserData>>(listOf())
+    val myBookmarksData = mutableStateOf<List<UserData>>(listOf())
 
     init {
         val currentUser = auth.currentUser
@@ -72,7 +73,6 @@ class KmViewModel @Inject constructor(
                     auth.createUserWithEmailAndPassword(email,password)
                         .addOnSuccessListener {
     ////
-
                             navigateTo(navController,DestinationScreen.HomeScreen.route)
                     }
     //Failure Listener
@@ -166,16 +166,15 @@ class KmViewModel @Inject constructor(
             imageUrl = imageUrl?:userData.value?.imageUrl,
             gender = gender?:userData.value?.gender
         )
-        uid?.let {
+        uid.let {
             inProgress.value = true
             db.collection(USER_NODE)
                 .document(uid)
                 .get()
                 .addOnSuccessListener {
                     if(it.exists()){
-  //update
-                    }
-                    else{
+                        //update
+                    } else{
                         db.collection(USER_NODE)
                             .add(userData)
                         getUserData(uid)
@@ -237,7 +236,7 @@ class KmViewModel @Inject constructor(
                         handleException(error,"cannot retrieve user")
                     }
                     if(value!=null){
-                        val user = value.toObject<Bookmark>()
+                        val user = value.toObject<UserData>()
                         bmkData.value = user
                         inProgress.value = false
                         onShowBookmark()
@@ -360,18 +359,32 @@ class KmViewModel @Inject constructor(
     fun onBookmark(
         bookmarkId :String
     ){
-        val authId = auth.currentUser?.uid
-       val  bookmark = Bookmark(
-           authId,
-           bookmarkId
-       )
-        db.collection(BOOKMARK).document().set(bookmark)
+        val currentAuthId = auth.currentUser?.uid
+        db.collection(USER_NODE)
+            .whereEqualTo("userId", bookmarkId)
+            .addSnapshotListener { value, error ->
+                if(error !=null){
+                    handleException(error,"cannot retrieve user")
+                }
+                if(value!=null){
+                    myBookmarksData.value = value.documents.mapNotNull {
+                        it.toObject<UserData>()
+                    }
+                    inProgress.value = false
+                    val bmk = Bookmark(
+                        currentAuthId,
+                        myBookmarksData.value[0]
+                    )
+                    db.collection(BOOKMARK).document().set(bmk)
+                }
+            }
+
     }
 
     fun onShowBookmark(){
-        val currentAuthId = bmkData.value?.authenticationId
+        val currentAuthId = auth.currentUser?.uid
         inProgressProfile.value = true
-        db.collection(USER_NODE)
+        db.collection(BOOKMARK)
             .whereEqualTo("authId",currentAuthId)
             .addSnapshotListener{value,error->
                 if(error !=null){

@@ -90,56 +90,10 @@ fun SearchScreen(
                             profile.userId?.let {
                                 navigateTo(navController, DestinationScreen.SingleProfileScreen.createRoute(id = it))
                             }
-                        },
-                        onBmkClick = {
-                            profile.userId?.let {
-                                viewModel.onBookmark(it)
-                            }
                         }
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun FAB(
-    showDialog : Boolean,
-    onFabClick :()-> Unit,
-    onDismiss : ()-> Unit,
-    onSaveProfile : (String)->Unit
-){
-    val addProfileMember = remember {
-        mutableStateOf("")
-    }
-    if(showDialog){
-        AlertDialog(
-            onDismissRequest = {
-                onDismiss.invoke()
-            addProfileMember.value=""
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        onSaveProfile(addProfileMember.value)
-                    }) {
-                    Text(text = "Save")
-                }
-            },
-            title = {
-                Text(text = "Save Profile")
-            },
-            text = {
-                OutlinedTextField(
-                    value = addProfileMember.value,
-                    onValueChange = {
-                        addProfileMember.value = it
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(MaterialTheme.colorScheme.onSecondary)
-                )
-            },
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
     }
 }

@@ -84,9 +84,6 @@ fun MyProfilesSscreen(
                             profile.userId?.let {
                                 navigateTo(navController, DestinationScreen.SingleProfileScreen.createRoute(id = it))
                             }
-                        },
-                        onBmkClick = {
-                            //nothing
                         }
                     )
                 }

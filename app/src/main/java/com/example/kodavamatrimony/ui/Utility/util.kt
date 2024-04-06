@@ -102,7 +102,6 @@ fun CommonImage(
 fun ProfileCard(
     profile: UserData,
     onItemClick: () -> Unit,
-    onBmkClick : ()->Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -153,14 +152,6 @@ fun ProfileCard(
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
                         .padding(12.dp)
-                )
-                Text(
-                    text = "Save Profile",
-                    modifier = Modifier
-                        .padding(12.dp)
-                        .clickable {
-                            onBmkClick.invoke()
-                        }
                 )
             }
 

@@ -42,7 +42,7 @@ data class UserAuthData(
 }
 
 data class Bookmark(
-    val authenticationId: String? = null,
-    val bmkId: String? =null,
+    val authId: String? = null,
+    val data: UserData? =null,
 
-    )
+)
