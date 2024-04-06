@@ -63,6 +63,7 @@ fun SearchScreen(
         if(viewModel.inProgressProfile.value){
             CommonProgressBar()
         }
+        viewModel.initSearch()
         val profiles = viewModel.profiles.value
         if (profiles.isEmpty()) {
             Column(

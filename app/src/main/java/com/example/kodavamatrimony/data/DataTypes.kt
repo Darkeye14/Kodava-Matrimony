@@ -29,20 +29,9 @@ data class UserData(
 
     )
 }
-data class UserAuthData(
-    var userId : String?= "",
-    var email : String?= "",
-    var password : String?= "",
-){
-    fun toMap() = mapOf(
-        "userId" to userId,
-        "email" to email,
-        "password" to password
-    )
-}
 
 data class Bookmark(
-    val authId: String? = null,
+    val authenticationId: String? = null,
     val data: UserData? =null,
 
-)
+    )

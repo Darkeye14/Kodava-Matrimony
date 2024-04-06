@@ -5,12 +5,11 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.example.kodavamatrimony.data.AUTH
+
 import com.example.kodavamatrimony.data.BOOKMARK
 import com.example.kodavamatrimony.data.Bookmark
 import com.example.kodavamatrimony.data.SignUpEvent
 import com.example.kodavamatrimony.data.USER_NODE
-import com.example.kodavamatrimony.data.UserAuthData
 import com.example.kodavamatrimony.data.UserData
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.example.kodavamatrimony.ui.Utility.navigateTo
@@ -41,7 +40,7 @@ class KmViewModel @Inject constructor(
     val userData = mutableStateOf<UserData?>(null)
     val bmkData = mutableStateOf<UserData?>(null)
 
-    val userAuthData = mutableStateOf<UserAuthData?>(null)
+
     val creatingProfile = mutableStateOf(false)
     val profiles = mutableStateOf<List<UserData>>(listOf())
     val myProfiles = mutableStateOf<List<UserData>>(listOf())
@@ -49,11 +48,13 @@ class KmViewModel @Inject constructor(
     val myBookmarksData = mutableStateOf<List<UserData>>(listOf())
 
     init {
+        populateProfiles()
         val currentUser = auth.currentUser
         signIn.value = currentUser != null
         currentUser?.uid?.let {
             getUserData(it)
         }
+
     }
     fun signUp(
         email :String,
@@ -87,7 +88,7 @@ class KmViewModel @Inject constructor(
             }
         auth.createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener {                    //gyanpg@gmail.com   gyan12345
-                createOrUpdateAuth(email, password)
+
     ////
                 navigateTo(navController,DestinationScreen.HomeScreen.route)
             if(it.isSuccessful){
@@ -103,41 +104,7 @@ class KmViewModel @Inject constructor(
         }
     }
 
-    fun createOrUpdateAuth(
-        email :String?= null,
-        password : String?= null,
 
-    ){
-        val uid = auth.currentUser?.uid
-        val userAuthData = UserAuthData(
-            userId = uid,
-            email = email ?:userAuthData.value?.email ,
-            password = password?:userAuthData.value?.password,
-
-        )
-        uid?.let {
-            inProgress.value = true
-            db.collection(AUTH)
-                .document(uid)
-                .get()
-                .addOnSuccessListener {
-                    if(it.exists()){
-                        //update
-                    }
-                    else{
-                        db.collection(AUTH)
-                            .add(userAuthData)
-                        getUserData(uid)
-                        inProgress.value = false
-                        creatingProfile.value = false
-                    }
-                }
-                .addOnFailureListener{
-                    handleException(it,"Cannot Add User")
-                }
-        }
-
-    }
 
     fun createOrUpdateProfile(
         name :String?= null,
@@ -190,6 +157,21 @@ class KmViewModel @Inject constructor(
 
     }
 
+    fun initSearch(){
+        inProgressProfile.value = true
+        db.collection(USER_NODE)
+            .get()
+            .addOnSuccessListener {
+                if(it !=null) {
+                    profiles.value = it.documents.mapNotNull {
+                        it.toObject<UserData>()
+                    }
+                    inProgressProfile.value = false
+                }
+            }
+
+
+    }
     private fun getUserData(uid :String) {
         inProgress.value=true
         db.collection(USER_NODE)
@@ -416,8 +398,6 @@ class KmViewModel @Inject constructor(
             }
         }
     }
-
-
 }
 
 
