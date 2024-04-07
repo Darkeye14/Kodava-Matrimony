@@ -19,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -119,7 +120,6 @@ fun CreateProfileScreen(
             val ageState = remember {
                 mutableStateOf(TextFieldValue())
             }
-            val focus = LocalFocusManager.current
             Image(painter = painterResource(id = R.drawable.love),
                 contentDescription = "Create Profile",
                 modifier = Modifier
@@ -347,13 +347,16 @@ fun ProfileImage(
     imageUrl: String?,
     viewModel: KmViewModel
 ) {
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) {uri ->
         uri?.let {
             viewModel.uploadProfileImage(uri)
+
         }
     }
+
     Box(
         modifier = Modifier
             .height(intrinsicSize = IntrinsicSize.Min)
@@ -383,5 +386,36 @@ fun ProfileImage(
         if (viewModel.inProgress.value){
             CommonProgressBar()
         }
+    }
+}
+
+
+@Composable
+fun ImageDialog() {
+    val openDialog = remember { mutableStateOf(true)  }
+    if(openDialog.value){
+        AlertDialog(
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        openDialog.value = false
+                    }) {
+                    Text(text = "OK")
+                }
+            },
+            title = {
+                Text(text = "Image Uploaded", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text(
+                    text = "Complete the process to see the image displayed",
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     }
 }

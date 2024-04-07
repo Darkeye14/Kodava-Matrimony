@@ -1,5 +1,6 @@
 package com.example.kodavamatrimony.ui.Screens
 
+import android.widget.PopupMenu.OnDismissListener
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -24,6 +28,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,7 +43,9 @@ import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationItem
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationMenu
+import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.example.kodavamatrimony.ui.Utility.CommonImage
+import com.example.kodavamatrimony.ui.Utility.navigateTo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,7 +55,9 @@ fun SingleProfileScreen(
     profileId: String
 ) {
     val currentProfile = viewModel.profiles.value.first { it.userId == profileId }
-
+    val show = remember{
+        mutableStateOf(false)
+    }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -79,8 +89,14 @@ fun SingleProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(12.dp),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                DeleteButton {
+                   show.value = true
+                }
+                if(show.value){
+                    dialog(profileId ,viewModel )
+                }
                 BookmarkButton { viewModel.onBookmark(profileId) }
             }
             Row(
@@ -115,15 +131,15 @@ fun SingleProfileScreen(
 
 @Composable
 fun Display(
-    textName : String,
-    text : String?
+    textName: String,
+    text: String?
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .padding(6.dp)
@@ -163,4 +179,47 @@ fun BookmarkButton(onClick: () -> Unit) {
         text = { Text(text = "Bookmark") },
         containerColor = MaterialTheme.colorScheme.primary
     )
+}
+
+
+@Composable
+fun DeleteButton(onClick: () -> Unit) {
+    ExtendedFloatingActionButton(
+        onClick = { onClick() },
+        icon = { Icon(Icons.Default.Delete, "Extended floating action button.") },
+        text = { Text(text = "Delete") },
+        containerColor = MaterialTheme.colorScheme.primary
+    )
+}
+
+
+@Composable
+fun dialog(profileId : String,viewModel : KmViewModel) {
+    val openDialog = remember { mutableStateOf(true)  }
+    if(openDialog.value){
+        AlertDialog(
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.onDelete(profileId)
+                        openDialog.value = false
+                    }) {
+                    Text(text = "OK")
+                }
+            },
+            title = {
+                Text(text = "App Will Crash", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text(
+                    text = "Relaunch the app to see the changes.(Only applicable if its your Profile)",
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
+    }
 }

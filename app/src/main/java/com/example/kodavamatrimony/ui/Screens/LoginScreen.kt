@@ -61,7 +61,7 @@ fun LoginScreen(
             val passwordState = remember {
                 mutableStateOf(TextFieldValue())
             }
-            val focus = LocalFocusManager.current
+
             Image(painter = painterResource(id = R.drawable.parents),
                 contentDescription = "signIn",
                 modifier = Modifier
