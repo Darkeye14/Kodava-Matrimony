@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Screens.CreateProfileScreen
+import com.example.kodavamatrimony.ui.Screens.DeleteScreen
 import com.example.kodavamatrimony.ui.Screens.HomeScreen
 import com.example.kodavamatrimony.ui.Screens.LoginScreen
 import com.example.kodavamatrimony.ui.Screens.MyProfilesSscreen
@@ -40,6 +41,13 @@ fun KmNavigation() {
             val profileId = it.arguments?.getString("profileId")
             profileId?.let {
                 SingleProfileScreen(navController,viewModel, profileId)
+            }
+
+        }
+        composable(DestinationScreen.DeleteScreen.route){
+            val profileId = it.arguments?.getString("profileId")
+            profileId?.let {
+                DeleteScreen(navController,viewModel, profileId)
             }
 
         }

@@ -1,5 +1,6 @@
 package com.example.kodavamatrimony.ui.Screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -63,7 +64,8 @@ fun HomeScreen(
            Column(
                modifier = Modifier
                    .fillMaxSize()
-                   .padding(it),
+                   .padding(it)
+                   .background(MaterialTheme.colorScheme.primaryContainer),
                verticalArrangement = Arrangement.Center,
                horizontalAlignment = Alignment.CenterHorizontally
            ) {

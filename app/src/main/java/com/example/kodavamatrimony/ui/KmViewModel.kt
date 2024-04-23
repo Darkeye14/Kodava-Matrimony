@@ -4,7 +4,6 @@ import android.net.Uri
 import android.util.Log
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.kodavamatrimony.data.BOOKMARK

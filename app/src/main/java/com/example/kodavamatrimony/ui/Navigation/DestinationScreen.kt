@@ -13,6 +13,9 @@ sealed class DestinationScreen(var route : String) {
     data object SingleProfileScreen:DestinationScreen("singleProfileScreen/{profileId}"){
        fun createRoute(id : String) = "singleProfileScreen/$id"
     }
+    data object DeleteScreen:DestinationScreen("deleteScreen/{profileId}"){
+       fun createRoute(id : String) = "deleteScreen/$id"
+    }
     data object PhotoViewScreen:DestinationScreen("photoViewScreen/{profileId}"){
         fun createRoute(id : String) = "singleProfileScreen/$id"
     }

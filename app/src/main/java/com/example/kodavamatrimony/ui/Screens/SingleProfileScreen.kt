@@ -92,13 +92,15 @@ fun SingleProfileScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 DeleteButton {
-                   show.value = true
+                    navigateTo(navController,DestinationScreen.DeleteScreen.createRoute(id = profileId))
+       //            show.value = true
                 }
                 if(show.value){
                     dialog(profileId ,viewModel )
                 }
                 BookmarkButton { viewModel.onBookmark(profileId) }
             }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
