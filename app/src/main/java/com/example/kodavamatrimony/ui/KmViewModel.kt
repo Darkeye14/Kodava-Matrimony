@@ -13,6 +13,7 @@ import com.example.kodavamatrimony.data.SignUpEvent
 import com.example.kodavamatrimony.data.USER_NODE
 import com.example.kodavamatrimony.data.UserData
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
+import com.example.kodavamatrimony.ui.Screens.CreateProfileScreen
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
@@ -352,7 +353,7 @@ class KmViewModel @Inject constructor(
                     myBookmarksData.value = value.documents.mapNotNull {
                         it.toObject<UserData>()
                     }
-                    inProgress.value = false
+
                     val bmk = Bookmark(
                         currentAuthId,
                         myBookmarksData.value[0]
@@ -360,7 +361,7 @@ class KmViewModel @Inject constructor(
                     db.collection(BOOKMARK).document().set(bmk)
                 }
             }
-
+        inProgress.value = false
     }
 
     fun onShowBookmark() {
