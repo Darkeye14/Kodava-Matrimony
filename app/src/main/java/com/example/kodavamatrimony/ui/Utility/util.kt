@@ -159,3 +159,25 @@ fun ProfileCard(
         }
     }
 }
+
+@Composable
+fun ChatCard(
+    profile: UserData,
+    onItemClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(90.dp)
+            .padding(12.dp)
+            .clickable {
+                onItemClick.invoke()
+            },
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
+    ) {
+
+
+
+    }
+}

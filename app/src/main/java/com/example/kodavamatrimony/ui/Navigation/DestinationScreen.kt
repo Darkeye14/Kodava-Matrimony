@@ -10,9 +10,13 @@ sealed class DestinationScreen(var route : String) {
     data object SavedScreen:DestinationScreen("savedScreen")
     data object CreateProfileScreen:DestinationScreen("createProfileScreen")
     data object MyProfilesScreen:DestinationScreen("myProfilesScreen")
+    data object ChatListScreen:DestinationScreen("chatListScreen")
     data object SingleProfileScreen:DestinationScreen("singleProfileScreen/{profileId}"){
        fun createRoute(id : String) = "singleProfileScreen/$id"
     }
+//    data object AnonymousScreen:DestinationScreen("anonymousScreen/{profileId}/{name}"){
+//       fun createRoute(id : String, name : String) = "anonymousScreen/$id/$name"
+//    }
     data object DeleteScreen:DestinationScreen("deleteScreen/{profileId}"){
        fun createRoute(id : String) = "deleteScreen/$id"
     }

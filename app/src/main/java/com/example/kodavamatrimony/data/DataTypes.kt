@@ -18,4 +18,19 @@ data class Bookmark(
     val authenticationId: String? = null,
     val data: UserData? =null,
 
-    )
+)
+data class Account(
+    val emailId : String,
+    val pwd : String,
+    val authId: String?
+)
+data class ChatData(
+    val chatId : String,
+    val user1 : ChatUser = ChatUser(),
+    val user2 : ChatUser = ChatUser()
+)
+
+data class ChatUser(
+    val accId : String ="",
+    val name : String=""
+)

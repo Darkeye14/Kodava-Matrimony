@@ -120,6 +120,7 @@ fun CreateProfileScreen(
             val ageState = remember {
                 mutableStateOf(TextFieldValue())
             }
+
             Image(painter = painterResource(id = R.drawable.love),
                 contentDescription = "Create Profile",
                 modifier = Modifier
@@ -347,7 +348,9 @@ fun ProfileImage(
     imageUrl: String?,
     viewModel: KmViewModel
 ) {
-
+    val show = remember{
+        mutableStateOf(false)
+    }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) {uri ->
@@ -366,7 +369,8 @@ fun ProfileImage(
                 .padding(8.dp)
                 .fillMaxWidth()
                 .clickable {
-                    launcher.launch("image/*")
+                    //                   launcher.launch("image/*")
+                    show.value = true
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -378,7 +382,10 @@ fun ProfileImage(
                 colors = CardDefaults.cardColors(Color.Gray)
 
             ) {
-                CommonImage(data = imageUrl)
+      // for image           CommonImage(data = imageUrl)
+                if (show.value == true){
+                    LauncherDialog()
+                }
 
             }
             Text(text = "Change Profile Picture")
@@ -412,6 +419,36 @@ fun ImageDialog() {
             text = {
                 Text(
                     text = "Complete the process to see the image displayed",
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
+    }
+}
+
+@Composable
+fun LauncherDialog() {
+    val openDialog = remember { mutableStateOf(true)  }
+    if(openDialog.value){
+        AlertDialog(
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        openDialog.value = false
+                    }) {
+                    Text(text = "OK")
+                }
+            },
+            title = {
+                Text(text = "Feature not Available yet", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text(
+                    text = "This Feature will be available in future updates. We apologise for the inconvenience",
                     fontWeight = FontWeight.SemiBold
                 )
             },

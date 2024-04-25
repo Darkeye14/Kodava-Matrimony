@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import com.example.kodavamatrimony.ui.KmViewModel
+import com.example.kodavamatrimony.ui.Screens.AnonymousChat
+import com.example.kodavamatrimony.ui.Screens.ChatListScreen
 import com.example.kodavamatrimony.ui.Screens.CreateProfileScreen
 import com.example.kodavamatrimony.ui.Screens.DeleteScreen
 import com.example.kodavamatrimony.ui.Screens.HomeScreen
@@ -51,6 +53,16 @@ fun KmNavigation() {
             }
 
         }
+//        composable(DestinationScreen.AnonymousScreen.route){
+//            val profileId = it.arguments?.getString("profileId")
+//            val name = it.arguments?.getString("name")
+//            profileId?.let {
+//                if (name != null) {
+//                    AnonymousChat(navController = navController, viewModel = viewModel, name = name, profileId =profileId )
+//                }
+//            }
+//
+//        }
         composable(DestinationScreen.MyProfilesScreen.route){
            MyProfilesSscreen(navController,viewModel)
         }
@@ -59,6 +71,9 @@ fun KmNavigation() {
         }
         composable(DestinationScreen.Login.route){
             LoginScreen(viewModel,navController)
+        }
+        composable(DestinationScreen.ChatListScreen.route){
+            ChatListScreen(viewModel,navController)
         }
         composable(DestinationScreen.SavedScreen.route){
             SavedScreen(navController = navController, viewModel = viewModel)

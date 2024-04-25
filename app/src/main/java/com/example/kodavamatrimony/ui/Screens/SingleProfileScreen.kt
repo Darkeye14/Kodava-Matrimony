@@ -4,6 +4,7 @@ import android.widget.PopupMenu.OnDismissListener
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +25,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -55,7 +57,7 @@ fun SingleProfileScreen(
     profileId: String
 ) {
     val currentProfile = viewModel.profiles.value.first { it.userId == profileId }
-    val show = remember{
+    val show = remember {
         mutableStateOf(false)
     }
     Scaffold(
@@ -83,7 +85,7 @@ fun SingleProfileScreen(
                 .padding(it)
                 .background(color = MaterialTheme.colorScheme.primaryContainer)
                 .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.Start
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 modifier = Modifier
@@ -92,12 +94,12 @@ fun SingleProfileScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 DeleteButton {
-                    navigateTo(navController,DestinationScreen.DeleteScreen.createRoute(id = profileId))
-       //            show.value = true
+                    navigateTo(
+                        navController,
+                        DestinationScreen.DeleteScreen.createRoute(id = profileId)
+                    )
                 }
-                if(show.value){
-                    dialog(profileId ,viewModel )
-                }
+
                 BookmarkButton { viewModel.onBookmark(profileId) }
             }
 
@@ -125,8 +127,18 @@ fun SingleProfileScreen(
             Display(textName = "Contact Number :", text = currentProfile.number)
             Display(textName = "Additional Information:", text = currentProfile.description)
             Display(textName = "Looking For :", text = currentProfile.requirement)
-
-
+            Button(
+                onClick = {
+                    show.value =true
+                },
+                contentPadding = PaddingValues(12.dp),
+                modifier = Modifier.padding(bottom = 12.dp, top = 6.dp)
+            ) {
+                Text(text = "Anonymous Chat", fontSize = 20.sp)
+            }
+            if (show.value){
+                Dialog( navController = navController , viewModel = viewModel)
+            }
         }
     }
 }
@@ -194,11 +206,16 @@ fun DeleteButton(onClick: () -> Unit) {
     )
 }
 
-
 @Composable
-fun dialog(profileId : String,viewModel : KmViewModel) {
-    val openDialog = remember { mutableStateOf(true)  }
-    if(openDialog.value){
+fun Dialog(
+    navController: NavController,
+    viewModel: KmViewModel
+) {
+    val chatName = remember {
+        mutableStateOf("")
+    }
+    val openDialog = remember { mutableStateOf(true) }
+    if (openDialog.value) {
         AlertDialog(
             onDismissRequest = {
                 openDialog.value = false
@@ -206,19 +223,22 @@ fun dialog(profileId : String,viewModel : KmViewModel) {
             confirmButton = {
                 Button(
                     onClick = {
-                        viewModel.onDelete(profileId)
                         openDialog.value = false
+          //viewmodel
+                        navigateTo(navController,DestinationScreen.ChatListScreen.route)
+
                     }) {
                     Text(text = "OK")
                 }
             },
             title = {
-                Text(text = "App Will Crash", fontWeight = FontWeight.Bold)
+                Text(text = "Direct Message", fontWeight = FontWeight.Bold)
             },
             text = {
-                Text(
-                    text = "Relaunch the app to see the changes.(Only applicable if its your Profile)",
-                    fontWeight = FontWeight.SemiBold
+                OutlinedTextField(
+                    value = chatName.value,
+                    onValueChange = { chatName.value = it },
+                    label = { Text(text = "Give a unique name to this chat") }
                 )
             },
             containerColor = MaterialTheme.colorScheme.secondaryContainer

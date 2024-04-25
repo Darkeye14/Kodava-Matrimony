@@ -6,8 +6,12 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.example.kodavamatrimony.data.ACCOUNTS
+import com.example.kodavamatrimony.data.Account
 import com.example.kodavamatrimony.data.BOOKMARK
 import com.example.kodavamatrimony.data.Bookmark
+import com.example.kodavamatrimony.data.CHATS
+import com.example.kodavamatrimony.data.ChatData
 import com.example.kodavamatrimony.data.SignUpEvent
 import com.example.kodavamatrimony.data.USER_NODE
 import com.example.kodavamatrimony.data.UserData
@@ -18,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -34,8 +39,8 @@ class KmViewModel @Inject constructor(
     private val storage: FirebaseStorage
 ) : ViewModel() {
 
-
     var inProgress = mutableStateOf(false)
+    var inProgressChat = mutableStateOf(false)
     var inProgressProfile = mutableStateOf(false)
     val eventMutableState = mutableStateOf<SignUpEvent<String?>?>(null)
     var signIn = mutableStateOf(false)
@@ -46,6 +51,8 @@ class KmViewModel @Inject constructor(
     val myProfiles = mutableStateOf<List<UserData>>(listOf())
     val myBookmarks = mutableStateOf<List<UserData>>(listOf())
     val myBookmarksData = mutableStateOf<List<UserData>>(listOf())
+    val chats = mutableStateOf<List<ChatData>>(listOf())
+
     init {
         populateProfiles()
         val currentUser = auth.currentUser
@@ -54,6 +61,40 @@ class KmViewModel @Inject constructor(
             getUserData(it)
         }
 
+    }
+
+    fun onAddChat(name : String, profileId :String){
+        if (name.isEmpty()){
+            handleException(customMessage = "name cannot be empty")
+        }
+        else{
+
+            val chatProfile = db.collection(USER_NODE)
+                .whereEqualTo("userId",profileId)
+                .get()
+                .addOnSuccessListener {
+                    val chatProfileAuth = it.toObjects<UserData>()[0].authId
+                }
+
+
+            val id = auth.currentUser?.uid
+          db.collection(CHATS)
+              .where(Filter.or(
+                  Filter.and(
+                     Filter.equalTo("user1.accId",id ),
+                      Filter.equalTo("user2.accId",profileId)
+                  ),
+                  Filter.and(
+                      Filter.equalTo("user1.accId",profileId ),
+                      Filter.equalTo("user2.accId",id)
+                  )
+              )).get()
+              .addOnSuccessListener{
+                  if (it.isEmpty){
+             //         db.collection(ACCOUNTS).whereEqualTo("")
+                  }
+              }
+        }
     }
 
     fun signUp(
@@ -73,7 +114,7 @@ class KmViewModel @Inject constructor(
                 if (it.isEmpty) {
                     auth.createUserWithEmailAndPassword(email, password)
                         .addOnSuccessListener {
-                            ////
+                            createAccount(email, password)
                             navigateTo(navController, DestinationScreen.HomeScreen.route)
                         }
                     //Failure Listener
@@ -103,6 +144,19 @@ class KmViewModel @Inject constructor(
             }
     }
 
+    fun createAccount(
+        email: String,
+        pwd: String
+    ) {
+        val id = auth.currentUser?.uid
+        val acc = Account(
+            emailId = email,
+            pwd = pwd,
+            authId = id
+        )
+        db.collection(ACCOUNTS)
+            .add(acc)
+    }
 
     fun createOrUpdateProfile(
         name: String? = null,
@@ -414,15 +468,15 @@ class KmViewModel @Inject constructor(
             )
         ).get().await()
 
-        if(toBeDeleted.documents.isNotEmpty()){
+        if (toBeDeleted.documents.isNotEmpty()) {
 
-            for(document in toBeDeleted){
+            for (document in toBeDeleted) {
                 try {
                     db.collection(USER_NODE).document(document.id).delete().await()
-                }catch (e: Exception) {
+                } catch (e: Exception) {
                     handleException(e)
-                    }
-                inProgress.value=false
+                }
+                inProgress.value = false
             }
         }
         inProgress.value = false
