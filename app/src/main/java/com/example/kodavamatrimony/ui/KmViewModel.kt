@@ -63,14 +63,13 @@ class KmViewModel @Inject constructor(
 
     }
 
-    fun onAddChat(name : String, profileId :String){
-        if (name.isEmpty()){
+    fun onAddChat(name: String, profileId: String) {
+        if (name.isEmpty()) {
             handleException(customMessage = "name cannot be empty")
-        }
-        else{
+        } else {
 
             val chatProfile = db.collection(USER_NODE)
-                .whereEqualTo("userId",profileId)
+                .whereEqualTo("userId", profileId)
                 .get()
                 .addOnSuccessListener {
                     val chatProfileAuth = it.toObjects<UserData>()[0].authId
@@ -78,22 +77,51 @@ class KmViewModel @Inject constructor(
 
 
             val id = auth.currentUser?.uid
-          db.collection(CHATS)
-              .where(Filter.or(
-                  Filter.and(
-                     Filter.equalTo("user1.accId",id ),
-                      Filter.equalTo("user2.accId",profileId)
-                  ),
-                  Filter.and(
-                      Filter.equalTo("user1.accId",profileId ),
-                      Filter.equalTo("user2.accId",id)
-                  )
-              )).get()
-              .addOnSuccessListener{
-                  if (it.isEmpty){
-             //         db.collection(ACCOUNTS).whereEqualTo("")
-                  }
-              }
+            db.collection(CHATS)
+                .where(
+                    Filter.or(
+                        Filter.and(
+                            Filter.equalTo("user1.accId", id),
+                            Filter.equalTo("user2.accId", profileId)
+                        ),
+                        Filter.and(
+                            Filter.equalTo("user1.accId", profileId),
+                            Filter.equalTo("user2.accId", id)
+                        )
+                    )
+                ).get()
+                .addOnSuccessListener {
+                    if (it.isEmpty) {
+                        //         db.collection(ACCOUNTS).whereEqualTo("")
+                    }
+                }
+        }
+    }
+
+    fun login(
+        email: String,
+        password: String,
+        navController: NavController
+
+    ) {
+        if (email.isEmpty() or password.isEmpty()) {
+            handleException(customMessage = "Please fill all the fields")
+            return
+        } else {
+            inProgress.value = true
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        signIn.value = true
+                        inProgress.value = false
+                        auth.currentUser?.uid?.let {
+                            getUserData(it)
+                        }
+                        navigateTo(navController, DestinationScreen.HomeScreen.route)
+                    } else {
+                        handleException(it.exception, customMessage = "Login failed")
+                    }
+                }
         }
     }
 
@@ -108,40 +136,35 @@ class KmViewModel @Inject constructor(
             return
         }
         inProgress.value = true
-        db.collection(USER_NODE).whereEqualTo("email", email)
-            .get()
-            .addOnSuccessListener {
-                if (it.isEmpty) {
-                    auth.createUserWithEmailAndPassword(email, password)
-                        .addOnSuccessListener {
-                            createAccount(email, password)
-                            navigateTo(navController, DestinationScreen.HomeScreen.route)
-                        }
-                    //Failure Listener
-                } else {
-                    handleException(customMessage = "email already exist")
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    createAccount(email, password)
                     inProgress.value = false
+                    navigateTo(navController, DestinationScreen.HomeScreen.route)
+                }
+                else{
+                    handleException(customMessage = " SignUp error")
                 }
             }
             .addOnFailureListener {
                 handleException(it)
-                return@addOnFailureListener
             }
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener {                    //gyanpg@gmail.com   gyan12345
 
-                ////
-                navigateTo(navController, DestinationScreen.HomeScreen.route)
-                if (it.isSuccessful) {
-                    signIn.value = true
-                    inProgress.value = false
-// do another fun for auth too
-//just navigate
-                    // createOrUpdateProfile(name = name,number = number)
-                } else {
-                    handleException(it.exception, "SignUp failed")
-                }
-            }
+
+//   auth.createUserWithEmailAndPassword(email, password)
+//            .addOnCompleteListener {                    //gyanpg@gmail.com   gyan12345
+//
+//                navigateTo(navController, DestinationScreen.HomeScreen.route)
+//                if (it.isSuccessful) {
+//                    signIn.value = true
+//                    inProgress.value = false
+//
+//                } else {
+//                    handleException(it.exception, "SignUp failed")
+//                }
+//            }
     }
 
     fun createAccount(
@@ -155,7 +178,8 @@ class KmViewModel @Inject constructor(
             authId = id
         )
         db.collection(ACCOUNTS)
-            .add(acc)
+            .document()
+            .set(acc)
     }
 
     fun createOrUpdateProfile(
@@ -277,33 +301,6 @@ class KmViewModel @Inject constructor(
                         bmkData.value = user
                         inProgress.value = false
                         onShowBookmark()
-                    }
-                }
-        }
-    }
-
-    fun login(
-        email: String,
-        password: String,
-        navController: NavController
-
-    ) {
-        if (email.isEmpty() or password.isEmpty()) {
-            handleException(customMessage = "Please fill all the fields")
-            return
-        } else {
-            inProgress.value = true
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        signIn.value = true
-                        inProgress.value = false
-                        auth.currentUser?.uid?.let {
-                            getUserData(it)
-                        }
-                        navigateTo(navController, DestinationScreen.HomeScreen.route)
-                    } else {
-                        handleException(it.exception, customMessage = "Login failed")
                     }
                 }
         }
