@@ -60,6 +60,9 @@ fun SignUpScreen(navController: NavController ,
             val passwordState = remember {
                 mutableStateOf(TextFieldValue())
             }
+            val nameState = remember {
+                mutableStateOf(TextFieldValue())
+            }
             val focus = LocalFocusManager.current
             Image(painter = painterResource(id = R.drawable.parents),
                 contentDescription = "signIn",
@@ -74,6 +77,22 @@ fun SignUpScreen(navController: NavController ,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(8.dp)
+            )
+
+            OutlinedTextField(
+                value = nameState.value,
+                onValueChange ={
+                    nameState.value = it
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                label = {
+                    Text(text = "Name",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                }
             )
 
             OutlinedTextField(
@@ -109,6 +128,7 @@ fun SignUpScreen(navController: NavController ,
             Button(
                 onClick = {
                           viewModel.signUp(
+                              nameState.value.text.trim(),
                               emailState.value.text.trim(),
                               passwordState.value.text.trim(),
                               navController

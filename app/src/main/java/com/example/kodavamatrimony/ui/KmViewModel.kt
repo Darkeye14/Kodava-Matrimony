@@ -2,7 +2,6 @@ package com.example.kodavamatrimony.ui
 
 import android.net.Uri
 import android.util.Log
-
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
@@ -12,11 +11,11 @@ import com.example.kodavamatrimony.data.BOOKMARK
 import com.example.kodavamatrimony.data.Bookmark
 import com.example.kodavamatrimony.data.CHATS
 import com.example.kodavamatrimony.data.ChatData
+import com.example.kodavamatrimony.data.ChatUser
 import com.example.kodavamatrimony.data.SignUpEvent
 import com.example.kodavamatrimony.data.USER_NODE
 import com.example.kodavamatrimony.data.UserData
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
-import com.example.kodavamatrimony.ui.Screens.CreateProfileScreen
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
@@ -63,16 +62,29 @@ class KmViewModel @Inject constructor(
 
     }
 
-    fun onAddChat(name: String, profileId: String) {
-        if (name.isEmpty()) {
-            handleException(customMessage = "name cannot be empty")
+    fun onAddChat( profileId: String) {
+        if (profileId.isEmpty()) {
+            handleException(customMessage = "invalid profile")
+            return
         } else {
-
-            val chatProfile = db.collection(USER_NODE)
+            var chatPartnerName = db.collection(USER_NODE)
                 .whereEqualTo("userId", profileId)
                 .get()
                 .addOnSuccessListener {
-                    val chatProfileAuth = it.toObjects<UserData>()[0].authId
+                    it.toObjects<UserData>()[0].name
+
+                }
+            val chatProfileAuth = db.collection(USER_NODE)
+                .whereEqualTo("userId", profileId)
+                .get()
+                .addOnSuccessListener {
+                    it.toObjects<UserData>()[0].authId
+                }
+            val myName = db.collection(ACCOUNTS)
+                .whereEqualTo("", profileId)
+                .get()
+                .addOnSuccessListener {
+                    it.toObjects<UserData>()[0].authId
                 }
 
 
@@ -84,6 +96,7 @@ class KmViewModel @Inject constructor(
                             Filter.equalTo("user1.accId", id),
                             Filter.equalTo("user2.accId", profileId)
                         ),
+                        //chat already exists anta
                         Filter.and(
                             Filter.equalTo("user1.accId", profileId),
                             Filter.equalTo("user2.accId", id)
@@ -92,7 +105,24 @@ class KmViewModel @Inject constructor(
                 ).get()
                 .addOnSuccessListener {
                     if (it.isEmpty) {
-                        //         db.collection(ACCOUNTS).whereEqualTo("")
+                        //acc correct or not
+                        val id = db.collection(ACCOUNTS).id
+                        val chat =
+                            ChatData(
+                                chatId = id,
+                                user1 = ChatUser(
+                                    accId = chatProfileAuth.toString(),
+                                    name = chatPartnerName.toString()
+                                ),
+                                user2 = ChatUser(
+                                    accId = auth.currentUser?.uid,
+                                    name = "Anonymous"
+                                )
+                            )
+
+                        if (chat != null) {
+                            db.collection(CHATS).document(id).set(chat)
+                        }
                     }
                 }
         }
@@ -126,6 +156,7 @@ class KmViewModel @Inject constructor(
     }
 
     fun signUp(
+        name :String,
         email: String,
         password: String,
         navController: NavController
@@ -140,11 +171,10 @@ class KmViewModel @Inject constructor(
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    createAccount(email, password)
+                    createAccount(name,email, password)
                     inProgress.value = false
                     navigateTo(navController, DestinationScreen.HomeScreen.route)
-                }
-                else{
+                } else {
                     handleException(customMessage = " SignUp error")
                 }
             }
@@ -168,11 +198,13 @@ class KmViewModel @Inject constructor(
     }
 
     fun createAccount(
+        name : String,
         email: String,
         pwd: String
     ) {
         val id = auth.currentUser?.uid
         val acc = Account(
+            name = name,
             emailId = email,
             pwd = pwd,
             authId = id

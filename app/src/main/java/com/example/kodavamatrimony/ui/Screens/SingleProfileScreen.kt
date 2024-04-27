@@ -137,7 +137,7 @@ fun SingleProfileScreen(
                 Text(text = "Anonymous Chat", fontSize = 20.sp)
             }
             if (show.value){
-                Dialog( navController = navController , viewModel = viewModel)
+                Dialog( profileId,navController = navController , viewModel = viewModel)
             }
         }
     }
@@ -208,6 +208,7 @@ fun DeleteButton(onClick: () -> Unit) {
 
 @Composable
 fun Dialog(
+    profileId : String,
     navController: NavController,
     viewModel: KmViewModel
 ) {
@@ -225,6 +226,7 @@ fun Dialog(
                     onClick = {
                         openDialog.value = false
           //viewmodel
+                        viewModel.onAddChat( profileId )
                         navigateTo(navController,DestinationScreen.ChatListScreen.route)
 
                     }) {
@@ -235,11 +237,7 @@ fun Dialog(
                 Text(text = "Direct Message", fontWeight = FontWeight.Bold)
             },
             text = {
-                OutlinedTextField(
-                    value = chatName.value,
-                    onValueChange = { chatName.value = it },
-                    label = { Text(text = "Give a unique name to this chat") }
-                )
+                Text(text = "Illegal or irrational use of others info will lead to permanent suspension and may lead to legal issues ")
             },
             containerColor = MaterialTheme.colorScheme.secondaryContainer
         )

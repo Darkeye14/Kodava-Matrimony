@@ -20,6 +20,7 @@ data class Bookmark(
 
 )
 data class Account(
+    val name: String,
     val emailId : String,
     val pwd : String,
     val authId: String?
@@ -31,6 +32,6 @@ data class ChatData(
 )
 
 data class ChatUser(
-    val accId : String ="",
+    val accId : String ?="",
     val name : String=""
 )
