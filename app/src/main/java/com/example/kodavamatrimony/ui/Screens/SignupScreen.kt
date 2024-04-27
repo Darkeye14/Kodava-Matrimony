@@ -13,9 +13,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -36,19 +41,32 @@ import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(navController: NavController ,
                  viewModel: KmViewModel
 ) {
 
-    Box(
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(text = stringResource(id = R.string.app_name))
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        },
         modifier = Modifier
             .fillMaxSize()
-    ){
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
         Column(
             modifier = Modifier
+                .padding(it)
                 .fillMaxSize()
-                .wrapContentHeight()
                 .verticalScroll(rememberScrollState())
                 .background(color = MaterialTheme.colorScheme.primaryContainer),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -108,6 +126,9 @@ fun SignUpScreen(navController: NavController ,
                         modifier = Modifier
                             .padding(8.dp)
                     )
+                },
+                placeholder = {
+                    Text(text = "Ex: abcd@gmail.com")
                 }
             )
             OutlinedTextField(
@@ -118,6 +139,9 @@ fun SignUpScreen(navController: NavController ,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
+                placeholder = {
+                    Text(text = "(Alphanumeric) Ex: abcd1234")
+                },
                 label = {
                     Text(text = "Password",
                         modifier = Modifier
@@ -127,13 +151,13 @@ fun SignUpScreen(navController: NavController ,
             )
             Button(
                 onClick = {
-                          viewModel.signUp(
-                              nameState.value.text.trim(),
-                              emailState.value.text.trim(),
-                              passwordState.value.text.trim(),
-                              navController
-                          )
-    //careful
+                    viewModel.signUp(
+                        nameState.value.text.trim(),
+                        emailState.value.text.trim(),
+                        passwordState.value.text.trim(),
+                        navController
+                    )
+                    //careful
 
                 },
                 modifier = Modifier

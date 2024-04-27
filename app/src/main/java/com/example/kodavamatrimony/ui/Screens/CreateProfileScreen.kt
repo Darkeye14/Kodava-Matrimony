@@ -62,26 +62,28 @@ fun CreateProfileScreen(
     navController: NavController,
     viewModel: KmViewModel
 ) {
-    Scaffold(bottomBar = {
-        BottomNavigationMenu(
-            selectedItem = BottomNavigationItem.CREATEPROFILELIST,
-            navController = navController,
+    Scaffold(
+        bottomBar = {
+            BottomNavigationMenu(
+                selectedItem = BottomNavigationItem.CREATEPROFILELIST,
+                navController = navController,
             )
-    },topBar = {
-        CenterAlignedTopAppBar(
-            title = {
-                Text(text = stringResource(id = R.string.app_name))
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.onPrimary
+        },
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(text = stringResource(id = R.string.app_name))
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
             )
-        )
-    },
+        },
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -90,7 +92,7 @@ fun CreateProfileScreen(
                 .background(MaterialTheme.colorScheme.primaryContainer)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             val imageUrl = viewModel.userData.value?.imageUrl
 
             val nameState = remember {
@@ -121,7 +123,8 @@ fun CreateProfileScreen(
                 mutableStateOf(TextFieldValue())
             }
 
-            Image(painter = painterResource(id = R.drawable.love),
+            Image(
+                painter = painterResource(id = R.drawable.love),
                 contentDescription = "Create Profile",
                 modifier = Modifier
                     .width(200.dp)
@@ -130,32 +133,35 @@ fun CreateProfileScreen(
 
             )
 
-            Text(text = "Create Profile",
+            Text(
+                text = "Create Profile",
                 fontSize = 30.sp,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(8.dp)
             )
- //Add profile pic
-            
+            //Add profile pic
+
             ProfileImage(imageUrl = imageUrl, viewModel = viewModel)
 
             OutlinedTextField(
                 value = genderState.value,
-                onValueChange ={
+                onValueChange = {
                     genderState.value = it
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
                 placeholder = {
-                    Text(text = "(Boy/Girl) *Mandatory Field",
+                    Text(
+                        text = "(Boy/Girl) *Mandatory Field",
                         modifier = Modifier
                             .padding(8.dp)
                     )
                 },
                 label = {
-                    Text(text = "Gender",
+                    Text(
+                        text = "Gender",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -164,11 +170,12 @@ fun CreateProfileScreen(
 
             OutlinedTextField(
                 value = nameState.value,
-                onValueChange ={
+                onValueChange = {
                     nameState.value = it
                 },
                 placeholder = {
-                    Text(text = "Full name including Mane Peda",
+                    Text(
+                        text = "Full name including Mane Peda",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -177,7 +184,8 @@ fun CreateProfileScreen(
                     imeAction = ImeAction.Done
                 ),
                 label = {
-                    Text(text = "Name",
+                    Text(
+                        text = "Name",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -186,14 +194,15 @@ fun CreateProfileScreen(
 
             OutlinedTextField(
                 value = familyNameState.value,
-                onValueChange ={
+                onValueChange = {
                     familyNameState.value = it
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
                 label = {
-                    Text(text = "Family Name (Mane Peda)",
+                    Text(
+                        text = "Family Name (Mane Peda)",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -201,14 +210,15 @@ fun CreateProfileScreen(
             )
             OutlinedTextField(
                 value = fatherNameState.value,
-                onValueChange ={
+                onValueChange = {
                     fatherNameState.value = it
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
                 label = {
-                    Text(text = "Father's Name",
+                    Text(
+                        text = "Father's Name",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -216,20 +226,22 @@ fun CreateProfileScreen(
             )
             OutlinedTextField(
                 value = motherNameState.value,
-                onValueChange ={
+                onValueChange = {
                     motherNameState.value = it
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
                 placeholder = {
-                    Text(text = "Include Tamane",
+                    Text(
+                        text = "Include Tamane",
                         modifier = Modifier
                             .padding(8.dp)
                     )
                 },
                 label = {
-                    Text(text = "Mother's Name",
+                    Text(
+                        text = "Mother's Name",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -238,11 +250,12 @@ fun CreateProfileScreen(
 
             OutlinedTextField(
                 value = numberState.value,
-                onValueChange ={
+                onValueChange = {
                     numberState.value = it
                 },
                 label = {
-                    Text(text = "Phone Number",
+                    Text(
+                        text = "Phone Number",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -253,17 +266,19 @@ fun CreateProfileScreen(
             )
             OutlinedTextField(
                 value = ageState.value,
-                onValueChange ={
+                onValueChange = {
                     ageState.value = it
                 },
                 placeholder = {
-                    Text(text = "dd-mm-yyyy",
+                    Text(
+                        text = "dd-mm-yyyy",
                         modifier = Modifier
                             .padding(8.dp)
                     )
                 },
                 label = {
-                    Text(text = "Date of Birth",
+                    Text(
+                        text = "Date of Birth",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -275,18 +290,20 @@ fun CreateProfileScreen(
 
             OutlinedTextField(
                 value = descriptionState.value,
-                onValueChange ={
+                onValueChange = {
                     descriptionState.value = it
                 },
                 placeholder = {
-                    Text(text = stringResource(id = R.string.description),
+                    Text(
+                        text = stringResource(id = R.string.description),
                         modifier = Modifier
                             .padding(8.dp)
                     )
                 },
                 singleLine = false,
                 label = {
-                    Text(text = "Description",
+                    Text(
+                        text = "Description",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -294,11 +311,12 @@ fun CreateProfileScreen(
             )
             OutlinedTextField(
                 value = requirementsState.value,
-                onValueChange ={
+                onValueChange = {
                     requirementsState.value = it
                 },
                 placeholder = {
-                    Text(text = stringResource(id = R.string.requirements),
+                    Text(
+                        text = stringResource(id = R.string.requirements),
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -306,27 +324,28 @@ fun CreateProfileScreen(
                 singleLine = false,
 
                 label = {
-                    Text(text = "Requirements",
+                    Text(
+                        text = "Requirements",
                         modifier = Modifier
                             .padding(8.dp)
                     )
                 }
             )
- //Called here
+            //Called here
             Button(
                 onClick = {
                     viewModel.createOrUpdateProfile(
-                        name= nameState.value.text,
-                        familyName=familyNameState.value.text,
-                        number=numberState.value.text,
+                        name = nameState.value.text,
+                        familyName = familyNameState.value.text,
+                        number = numberState.value.text,
                         fathersName = fatherNameState.value.text,
                         mothersName = motherNameState.value.text,
-                        age=ageState.value.text,
+                        age = ageState.value.text,
                         description = descriptionState.value.text,
                         requirement = requirementsState.value.text,
-                        gender=genderState.value.text.uppercase(Locale.ROOT)
+                        gender = genderState.value.text.uppercase(Locale.ROOT)
                     )
-                    navigateTo(navController,DestinationScreen.HomeScreen.route)
+                    navigateTo(navController, DestinationScreen.HomeScreen.route)
                     viewModel.onAddedProfile(nameState.value.text)
                 },
                 modifier = Modifier
@@ -335,12 +354,11 @@ fun CreateProfileScreen(
                 Text(text = "CREATE PROFILE")
             }
         }
-        if(viewModel.inProgress.value ){
+        if (viewModel.inProgress.value) {
             CommonProgressBar()
         }
     }
 }
-
 
 
 @Composable
@@ -348,12 +366,12 @@ fun ProfileImage(
     imageUrl: String?,
     viewModel: KmViewModel
 ) {
-    val show = remember{
+    val show = remember {
         mutableStateOf(false)
     }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) {uri ->
+    ) { uri ->
         uri?.let {
             viewModel.uploadProfileImage(uri)
 
@@ -363,7 +381,7 @@ fun ProfileImage(
     Box(
         modifier = Modifier
             .height(intrinsicSize = IntrinsicSize.Min)
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .padding(8.dp)
@@ -382,15 +400,15 @@ fun ProfileImage(
                 colors = CardDefaults.cardColors(Color.Gray)
 
             ) {
-      // for image           CommonImage(data = imageUrl)
-                if (show.value == true){
+                // for image           CommonImage(data = imageUrl)
+                if (show.value == true) {
                     LauncherDialog()
                 }
 
             }
             Text(text = "Change Profile Picture")
         }
-        if (viewModel.inProgress.value){
+        if (viewModel.inProgress.value) {
             CommonProgressBar()
         }
     }
@@ -399,8 +417,8 @@ fun ProfileImage(
 
 @Composable
 fun ImageDialog() {
-    val openDialog = remember { mutableStateOf(true)  }
-    if(openDialog.value){
+    val openDialog = remember { mutableStateOf(true) }
+    if (openDialog.value) {
         AlertDialog(
             onDismissRequest = {
                 openDialog.value = false
@@ -429,8 +447,8 @@ fun ImageDialog() {
 
 @Composable
 fun LauncherDialog() {
-    val openDialog = remember { mutableStateOf(true)  }
-    if(openDialog.value){
+    val openDialog = remember { mutableStateOf(true) }
+    if (openDialog.value) {
         AlertDialog(
             onDismissRequest = {
                 openDialog.value = false
