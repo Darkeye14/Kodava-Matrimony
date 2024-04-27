@@ -43,6 +43,7 @@ class KmViewModel @Inject constructor(
     var inProgressProfile = mutableStateOf(false)
     val eventMutableState = mutableStateOf<SignUpEvent<String?>?>(null)
     var signIn = mutableStateOf(false)
+    val authenticationId = auth.currentUser?.uid
     val userData = mutableStateOf<UserData?>(null)
     val bmkData = mutableStateOf<UserData?>(null)
     val creatingProfile = mutableStateOf(false)
@@ -53,7 +54,6 @@ class KmViewModel @Inject constructor(
     val chats = mutableStateOf<List<ChatData>>(listOf())
 
     init {
-        populateProfiles()
         val currentUser = auth.currentUser
         signIn.value = currentUser != null
         currentUser?.uid?.let {
@@ -63,47 +63,48 @@ class KmViewModel @Inject constructor(
     }
 
     fun onAddChat(profileId: String) {
-        val id = auth.currentUser?.uid
+
         if (profileId.isEmpty()) {
             handleException(customMessage = "invalid profile")
             return
         } else {
-            db.collection(CHATS)
-                .where(
-                    Filter.or(
-                        Filter.and(
-                            Filter.equalTo("user1.accId", id),
-                            Filter.equalTo("user2.accId", profileId)
-                        ),
-                        //chat already exists anta
-                        Filter.and(
-                            Filter.equalTo("user1.accId", profileId),
-                            Filter.equalTo("user2.accId", id)
-                        )
-                    )
-                ).get()
-                .addOnSuccessListener { chatExist ->
-                    if (chatExist.isEmpty) {
-                        db.collection(USER_NODE)
-                            .whereEqualTo("userId", profileId)
-                            .get()
-                            .addOnSuccessListener {
 
-                                val chatPartner = it.toObjects<UserData>()[0]
-                                val chatPartnerName = chatPartner.name
-                                val chatPartnerAuth = chatPartner.authId
+            db.collection(USER_NODE)
+                .whereEqualTo("userId", profileId)
+                .get()
+                .addOnSuccessListener {
 
-                                db.collection(ACCOUNTS)
-                                    .whereEqualTo("authId", id)
-                                    .get()
-                                    .addOnSuccessListener {
-                                        val myName = it.toObjects<UserData>()[0].name
-                                        val chatId = db.collection(CHATS).document().id
+                    val chatPartner = it.toObjects<UserData>()[0]
+                    val chatPartnerName = chatPartner.name
+                    val chatPartnerAuth = chatPartner.authId
+
+                    db.collection(ACCOUNTS)
+                        .whereEqualTo("authId", authenticationId)
+                        .get()
+                        .addOnSuccessListener {
+                            val myName = it.toObjects<UserData>()[0].name
+                            val chatId = db.collection(CHATS).document().id
+                            db.collection(CHATS)
+                                .where(
+                                    Filter.or(
+                                        Filter.and(
+                                            Filter.equalTo("user1.accId", authenticationId),
+                                            Filter.equalTo("user2.accId", chatPartnerAuth)
+                                        ),
+                                        //chat already exists anta
+                                        Filter.and(
+                                            Filter.equalTo("user1.accId", chatPartnerAuth),
+                                            Filter.equalTo("user2.accId", authenticationId)
+                                        )
+                                    )
+                                ).get()
+                                .addOnSuccessListener { chatExist ->
+                                    if (chatExist.isEmpty) {
                                         val chat =
                                             ChatData(
                                                 chatId = chatId,
                                                 user1 = ChatUser(
-                                                    accId = id,
+                                                    accId = authenticationId,
                                                     name = myName ?: "Anonymous"
                                                 ),
                                                 user2 = ChatUser(
@@ -113,19 +114,41 @@ class KmViewModel @Inject constructor(
                                             )
                                         db.collection(CHATS).document(chatId).set(chat)
                                     }
-                                    .addOnFailureListener {
-                                        handleException(it)
-                                    }
-                            }
-                    }
-                    else{
-                        handleException(customMessage =  "already exist")
-                    }
+                                }
+                        }
+                        .addOnFailureListener {
+                            handleException(it)
+                        }
                 }
-            //
+
 
         }
     }
+
+    fun populateChat(
+
+    ) {
+        val id = auth.currentUser?.uid
+        inProgressChat.value = true
+        db.collection(CHATS).where(
+          Filter.or(
+              Filter.equalTo("user1.accId",id),
+              Filter.equalTo("user2.accId",id)
+          )
+
+        ).addSnapshotListener { value, error ->
+            if (error !=null){
+                if (value != null) {
+                    chats.value = value.documents.mapNotNull {
+                        it.toObject<ChatData>()
+                    }
+                    inProgressChat.value = false
+                }
+            }
+        }
+
+    }
+
 
     fun login(
         email: String,
@@ -181,19 +204,6 @@ class KmViewModel @Inject constructor(
                 handleException(it)
             }
 
-
-//   auth.createUserWithEmailAndPassword(email, password)
-//            .addOnCompleteListener {                    //gyanpg@gmail.com   gyan12345
-//
-//                navigateTo(navController, DestinationScreen.HomeScreen.route)
-//                if (it.isSuccessful) {
-//                    signIn.value = true
-//                    inProgress.value = false
-//
-//                } else {
-//                    handleException(it.exception, "SignUp failed")
-//                }
-//            }
     }
 
     fun createAccount(
@@ -293,6 +303,7 @@ class KmViewModel @Inject constructor(
                     userData.value = user
                     inProgress.value = false
                     populateProfiles()
+                    populateChat()
                 }
             }
     }

@@ -36,7 +36,7 @@ import com.example.kodavamatrimony.ui.Utility.navigateTo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatListScreen(
-    viewModel : KmViewModel,
+    viewModel: KmViewModel,
     navController: NavController
 ) {
     Scaffold(
@@ -58,7 +58,7 @@ fun ChatListScreen(
             )
         }
     ) {
-        if(viewModel.inProgressProfile.value){
+        if (viewModel.inProgressProfile.value) {
             CommonProgressBar()
         }
         val profiles = viewModel.profiles.value
@@ -75,25 +75,21 @@ fun ChatListScreen(
             }
         } else {
             val chats = viewModel.chats.value
-            val userData = viewModel.userData.value
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it)
-                    .background(color = MaterialTheme.colorScheme.primaryContainer)
-            ) {
-                items(profiles){ profile ->
-
-                    ProfileCard(
-                        profile = profile,
-                        onItemClick = {
-                            profile.userId?.let {
-                                navigateTo(navController, DestinationScreen.SingleProfileScreen.createRoute(id = it))
-                            }
-                        }
-                    )
+            val id =
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it)
+                        .background(color = MaterialTheme.colorScheme.primaryContainer)
+                ) {
+                    items(chats) { chat ->
+                        val chatUser =
+                            if (chat.user1.accId == viewModel.authenticationId)
+                                chat.user2
+                            else
+                                chat.user1
+                    }
                 }
-            }
         }
     }
 }
