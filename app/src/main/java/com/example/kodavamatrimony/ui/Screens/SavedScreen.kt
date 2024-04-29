@@ -77,14 +77,16 @@ fun SavedScreen(
             ) {
                 items(profiles){ profile ->
 
-                    ProfileCard(
-                        profile = profile,
-                        onItemClick = {
-                            profile.userId?.let {
-                                navigateTo(navController, DestinationScreen.SingleProfileScreen.createRoute(id = it))
+                    profile.data?.let { it1 ->
+                        ProfileCard(
+                            profile = it1,
+                            onItemClick = {
+                                profile.data?.userId?.let {
+                                    navigateTo(navController, DestinationScreen.SingleProfileScreen.createRoute(id = it))
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }

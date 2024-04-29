@@ -140,10 +140,10 @@ fun SignUpScreen(navController: NavController ,
                     imeAction = ImeAction.Done
                 ),
                 placeholder = {
-                    Text(text = "(Alphanumeric) Ex: abcd1234")
+                    Text(text = " Ex: abcd1234")
                 },
                 label = {
-                    Text(text = "Password",
+                    Text(text = "Password (Alphanumeric)",
                         modifier = Modifier
                             .padding(8.dp)
                     )

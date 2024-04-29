@@ -55,10 +55,11 @@ class KmViewModel @Inject constructor(
     val profiles = mutableStateOf<List<UserData>>(listOf())
     val myProfiles = mutableStateOf<List<UserData>>(listOf())
     val myBookmarks = mutableStateOf<List<UserData>>(listOf())
-    val myBookmarksData = mutableStateOf<List<UserData>>(listOf())
+    val myBookmarksData = mutableStateOf<List<Bookmark>>(listOf())
     val chats = mutableStateOf<List<ChatData>>(listOf())
     val chatMessages = mutableStateOf<List<Message>>(listOf())
-    var currentChatMessageListener : ListenerRegistration?=null
+    var currentChatMessageListener: ListenerRegistration? = null
+
     init {
         val currentUser = auth.currentUser
         signIn.value = currentUser != null
@@ -70,26 +71,27 @@ class KmViewModel @Inject constructor(
 
     fun populateMessages(
         chatId: String
-    ){
-        inProgressChat.value =true
+    ) {
+        inProgressChat.value = true
         currentChatMessageListener = db.collection(CHATS).document(chatId)
-            .collection(MESSAGE).orderBy("sortTime",Query.Direction.DESCENDING).addSnapshotListener{ value, error ->
-                if (error!=null){
+            .collection(MESSAGE).orderBy("sortTime", Query.Direction.DESCENDING)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
                     handleException(error)
                 }
-                if (value !=null){
+                if (value != null) {
                     chatMessages.value = value.documents.mapNotNull {
                         it.toObject<Message>()
                     }
 
-                        inProgressChat.value = false
+                    inProgressChat.value = false
                 }
 
 
             }
     }
 
-    fun depopulateMessages(){
+    fun depopulateMessages() {
         chatMessages.value = listOf()
         currentChatMessageListener = null
     }
@@ -180,9 +182,9 @@ class KmViewModel @Inject constructor(
     }
 
     fun onSendReply(
-        chatId : String,
-        msg : String
-    ){
+        chatId: String,
+        msg: String
+    ) {
         val time = Calendar.getInstance().time.toString()
         val sortTime = Calendar.getInstance().time.time.toString()
 
@@ -201,12 +203,16 @@ class KmViewModel @Inject constructor(
         navController: NavController
 
     ) {
-        if (email.isEmpty() or password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty()) {
             handleException(customMessage = "Please fill all the fields")
-            return
+
         } else {
             inProgress.value = true
             auth.signInWithEmailAndPassword(email, password)
+                .addOnFailureListener {
+                    handleException( customMessage = "Login failed")
+
+                }
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         signIn.value = true
@@ -222,11 +228,11 @@ class KmViewModel @Inject constructor(
         }
     }
 
-    fun logout(){
-        auth.signOut()
+    fun logout() {
         signIn.value = false
         userData.value = null
         depopulateMessages()
+        auth.signOut()
         currentChatMessageListener = null
     }
 
@@ -244,6 +250,9 @@ class KmViewModel @Inject constructor(
         inProgress.value = true
 
         auth.createUserWithEmailAndPassword(email, password)
+            .addOnFailureListener {
+                handleException(it)
+            }
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     createAccount(name, email, password)
@@ -273,6 +282,7 @@ class KmViewModel @Inject constructor(
         db.collection(ACCOUNTS)
             .document()
             .set(acc)
+
     }
 
     fun createOrUpdateProfile(
@@ -353,10 +363,11 @@ class KmViewModel @Inject constructor(
                 if (value != null) {
                     val user = value.toObject<UserData>()
                     userData.value = user
-                    inProgress.value = false
                     populateProfiles()
                     populateChat()
                     onShowBookmark()
+                    inProgress.value = false
+
                 }
             }
     }
@@ -473,13 +484,13 @@ class KmViewModel @Inject constructor(
                     handleException(error, "cannot retrieve user")
                 }
                 if (value != null) {
-                    myBookmarksData.value = value.documents.mapNotNull {
+                    myBookmarks.value = value.documents.mapNotNull {
                         it.toObject<UserData>()
                     }
 
                     val bmk = Bookmark(
                         authenticationId,
-                        myBookmarksData.value[0]
+                        myBookmarks.value[0]
                     )
                     db.collection(BOOKMARK).document().set(bmk)
                 }
@@ -490,14 +501,14 @@ class KmViewModel @Inject constructor(
     fun onShowBookmark() {
         inProgressProfile.value = true
         db.collection(BOOKMARK)
-            .whereEqualTo("authId", authenticationId)
+            .whereEqualTo("authenticationId", authenticationId)
             .addSnapshotListener { value, error ->
                 if (error != null) {
                     handleException(error, "cannot retrieve user")
                 }
                 if (value != null) {
-                    myBookmarks.value = value.documents.mapNotNull {
-                        it.toObject<UserData>()
+                    myBookmarksData.value = value.documents.mapNotNull {
+                        it.toObject<Bookmark>()
                     }
                     inProgressProfile.value = false
                 }

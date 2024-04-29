@@ -90,7 +90,7 @@ fun HomeScreen(
                        navigateTo(navController,DestinationScreen.MyProfilesScreen.route)
                    }
                    HomeScreenCard(Modifier.weight(1f),text = "Saved Profiles") {
-                       viewModel.getMyBookmarksData()
+
                        navigateTo(navController,DestinationScreen.SavedScreen.route)
                    }
                }
