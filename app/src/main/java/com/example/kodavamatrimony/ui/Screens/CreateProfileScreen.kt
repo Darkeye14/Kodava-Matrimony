@@ -375,7 +375,6 @@ fun ProfileImage(
     ) { uri ->
         uri?.let {
             viewModel.uploadProfileImage(uri)
-
         }
     }
 

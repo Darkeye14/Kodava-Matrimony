@@ -356,6 +356,7 @@ class KmViewModel @Inject constructor(
                     inProgress.value = false
                     populateProfiles()
                     populateChat()
+                    onShowBookmark()
                 }
             }
     }
@@ -379,26 +380,6 @@ class KmViewModel @Inject constructor(
                 }
         }
     }
-
-    fun getMyBookmarksData() {
-        inProgress.value = true
-        if (authenticationId != null) {
-            db.collection(BOOKMARK)
-                .document(authenticationId)
-                .addSnapshotListener { value, error ->
-                    if (error != null) {
-                        handleException(error, "cannot retrieve user")
-                    }
-                    if (value != null) {
-                        val user = value.toObject<UserData>()
-                        bmkData.value = user
-                        inProgress.value = false
-                        onShowBookmark()
-                    }
-                }
-        }
-    }
-
 
     fun handleException(
         exception: Exception? = null,
