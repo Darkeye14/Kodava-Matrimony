@@ -50,7 +50,6 @@ class KmViewModel @Inject constructor(
     var signIn = mutableStateOf(false)
     val authenticationId = auth.currentUser?.uid
     val userData = mutableStateOf<UserData?>(null)
-    val bmkData = mutableStateOf<UserData?>(null)
     val creatingProfile = mutableStateOf(false)
     val profiles = mutableStateOf<List<UserData>>(listOf())
     val myProfiles = mutableStateOf<List<UserData>>(listOf())
@@ -220,7 +219,7 @@ class KmViewModel @Inject constructor(
                         authenticationId?.let {
                             getUserData(it)
                         }
-                        navigateTo(navController, DestinationScreen.HomeScreen.route)
+                        navigateTo(navController, DestinationScreen.AfterLoginScreen.route)
                     } else {
                         handleException(it.exception, customMessage = "Login failed")
                     }
@@ -464,7 +463,6 @@ class KmViewModel @Inject constructor(
         inProgressProfile.value = true
         db.collection(USER_NODE)
             .addSnapshotListener { value, error ->
-// smthin here
                 if (value != null) {
                     profiles.value = value.documents.mapNotNull {
                         it.toObject<UserData>()

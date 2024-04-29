@@ -4,9 +4,10 @@ import SearchScreen
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.kodavamatrimony.ui.KmViewModel
+import com.example.kodavamatrimony.ui.Screens.AfterLoginScreen
 import com.example.kodavamatrimony.ui.Screens.ChatListScreen
 import com.example.kodavamatrimony.ui.Screens.CreateProfileScreen
 import com.example.kodavamatrimony.ui.Screens.DeleteScreen
@@ -35,6 +36,9 @@ fun KmNavigation() {
         }
         composable(DestinationScreen.SignUp.route){
             SignUpScreen(navController,viewModel)
+        }
+        composable(DestinationScreen.AfterLoginScreen.route){
+            AfterLoginScreen()
         }
         composable(DestinationScreen.HomeScreen.route){
             HomeScreen(navController,viewModel)
