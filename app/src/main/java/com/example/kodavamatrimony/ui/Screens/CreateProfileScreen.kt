@@ -82,7 +82,8 @@ fun CreateProfileScreen(
         },
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
+ // changed color from surface to primCont
+            .background(MaterialTheme.colorScheme.primaryContainer)
     ) {
         Column(
             modifier = Modifier

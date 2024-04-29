@@ -59,7 +59,8 @@ fun HomeScreen(
                     selectedItem = BottomNavigationItem.HOMELIST,
                     navController = navController
                 )
-            }
+            },
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         ) {
            Column(
                modifier = Modifier
@@ -86,9 +87,9 @@ fun HomeScreen(
 
                        navigateTo(navController,DestinationScreen.SearchScreen.route)
                    }
-                   HomeScreenCard(Modifier.weight(1f),text = "Create Profile") {
+                   HomeScreenCard(Modifier.weight(1f),text = "Direct Messages") {
 
-                       navigateTo(navController,DestinationScreen.CreateProfileScreen.route)
+                       navigateTo(navController,DestinationScreen.ChatListScreen.route)
                    }
                }
            }

@@ -7,7 +7,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import com.example.kodavamatrimony.ui.KmViewModel
-import com.example.kodavamatrimony.ui.Screens.AnonymousChat
 import com.example.kodavamatrimony.ui.Screens.ChatListScreen
 import com.example.kodavamatrimony.ui.Screens.CreateProfileScreen
 import com.example.kodavamatrimony.ui.Screens.DeleteScreen
@@ -16,6 +15,7 @@ import com.example.kodavamatrimony.ui.Screens.LoginScreen
 import com.example.kodavamatrimony.ui.Screens.MyProfilesSscreen
 import com.example.kodavamatrimony.ui.Screens.SavedScreen
 import com.example.kodavamatrimony.ui.Screens.SignUpScreen
+import com.example.kodavamatrimony.ui.Screens.SingleChatScreen
 import com.example.kodavamatrimony.ui.Screens.SingleProfileScreen
 import com.example.kodavamatrimony.ui.Screens.SplashScreen
 
@@ -46,6 +46,13 @@ fun KmNavigation() {
             }
 
         }
+        composable(DestinationScreen.SingleChatScreen.route){
+            val chatId = it.arguments?.getString("chatId")
+            chatId?.let {
+                SingleChatScreen(navController,viewModel, chatId)
+            }
+
+        }
         composable(DestinationScreen.DeleteScreen.route){
             val profileId = it.arguments?.getString("profileId")
             profileId?.let {
@@ -53,16 +60,7 @@ fun KmNavigation() {
             }
 
         }
-//        composable(DestinationScreen.AnonymousScreen.route){
-//            val profileId = it.arguments?.getString("profileId")
-//            val name = it.arguments?.getString("name")
-//            profileId?.let {
-//                if (name != null) {
-//                    AnonymousChat(navController = navController, viewModel = viewModel, name = name, profileId =profileId )
-//                }
-//            }
-//
-//        }
+
         composable(DestinationScreen.MyProfilesScreen.route){
            MyProfilesSscreen(navController,viewModel)
         }

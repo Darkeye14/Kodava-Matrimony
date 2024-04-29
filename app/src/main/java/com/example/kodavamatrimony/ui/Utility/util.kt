@@ -3,6 +3,7 @@ package com.example.kodavamatrimony.ui.Utility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -26,10 +28,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.kodavamatrimony.data.ChatData
 import com.example.kodavamatrimony.data.UserData
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
@@ -162,7 +167,7 @@ fun ProfileCard(
 
 @Composable
 fun ChatCard(
-    profile: UserData,
+    name : String,
     onItemClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -176,8 +181,20 @@ fun ChatCard(
             },
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
     ) {
+        Column (
+            modifier = modifier
+                .fillMaxSize()
+                .padding(10.dp)
+                .horizontalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center
 
-
-
+        ){
+            Text(
+                text = name,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 30.sp
+            )
+        }
     }
 }

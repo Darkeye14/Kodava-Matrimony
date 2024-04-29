@@ -26,7 +26,7 @@ data class Account(
     val authId: String?
 )
 data class ChatData(
-    val chatId : String,
+    val chatId : String ?="",
     val user1 : ChatUser = ChatUser(),
     val user2 : ChatUser = ChatUser()
 )
@@ -34,4 +34,10 @@ data class ChatData(
 data class ChatUser(
     val accId : String ?="",
     val name : String=""
+)
+
+data class Message(
+    val sendBy :String ? = "",
+    val message : String ?="",
+    val timeStamp :String?=""
 )

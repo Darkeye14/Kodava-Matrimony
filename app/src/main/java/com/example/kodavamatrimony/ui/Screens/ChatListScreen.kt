@@ -7,30 +7,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationItem
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationMenu
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
+import com.example.kodavamatrimony.ui.Utility.ChatCard
 import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
-import com.example.kodavamatrimony.ui.Utility.ProfileCard
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,6 +52,7 @@ fun ChatListScreen(
             )
         }
     ) {
+        viewModel.depopulateMessages()
         if (viewModel.inProgressProfile.value) {
             CommonProgressBar()
         }
@@ -75,22 +70,29 @@ fun ChatListScreen(
             }
         } else {
             val chats = viewModel.chats.value
-            val id =
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it)
-                        .background(color = MaterialTheme.colorScheme.primaryContainer)
-                ) {
-                    items(chats) { chat ->
-                        val chatUser =
-                            if (chat.user1.accId == viewModel.authenticationId)
-                                chat.user2
-                            else
-                                chat.user1
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+                    .background(color = MaterialTheme.colorScheme.primaryContainer)
+            ) {
+                items(chats) { chat ->
+                    val chatUser =
+                        if (chat.user1.accId == viewModel.authenticationId)
+                            chat.user2
+                        else
+                            chat.user1
+
+                    chat.chatId?.let {
+                        ChatCard(
+                            name = chatUser.name,
+                            onItemClick = {
+                                navigateTo(navController,DestinationScreen.SingleChatScreen.createRoute(it))
+                            }
+                        )
                     }
                 }
+            }
         }
     }
 }
-
