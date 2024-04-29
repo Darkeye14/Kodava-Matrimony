@@ -39,5 +39,6 @@ data class ChatUser(
 data class Message(
     val sendBy :String ? = "",
     val message : String ?="",
-    val timeStamp :String?=""
+    val timeStamp :String?="",
+    val sortTime : String?=""
 )

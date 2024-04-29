@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -62,6 +63,7 @@ fun HomeScreen(
             },
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ) {
+
            Column(
                modifier = Modifier
                    .fillMaxSize()
@@ -70,6 +72,18 @@ fun HomeScreen(
                verticalArrangement = Arrangement.Center,
                horizontalAlignment = Alignment.CenterHorizontally
            ) {
+               Row(
+                   modifier = Modifier.padding(8.dp),
+                   horizontalArrangement = Arrangement.End,
+                   verticalAlignment = Alignment.Top
+               ){
+                   Button(onClick = {
+                       viewModel.logout()
+                       navigateTo(navController,DestinationScreen.Login.route)
+                   }) {
+                       Text(text = "Log Out")
+                   }
+               }
                Row(modifier = Modifier.padding(8.dp)) {
                    HomeScreenCard(Modifier.weight(1f),text = "Your Profiles") {
                        viewModel.getMyProfilesData()

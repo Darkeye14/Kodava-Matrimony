@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
@@ -72,7 +73,7 @@ class KmViewModel @Inject constructor(
     ){
         inProgressChat.value =true
         currentChatMessageListener = db.collection(CHATS).document(chatId)
-            .collection(MESSAGE).addSnapshotListener{ value, error ->
+            .collection(MESSAGE).orderBy("sortTime",Query.Direction.DESCENDING).addSnapshotListener{ value, error ->
                 if (error!=null){
                     handleException(error)
                 }
@@ -80,9 +81,7 @@ class KmViewModel @Inject constructor(
                     chatMessages.value = value.documents.mapNotNull {
                         it.toObject<Message>()
                     }
-//                        .sortedBy {
-//                        it.timeStamp
-//                    }
+
                         inProgressChat.value = false
                 }
 
@@ -185,10 +184,13 @@ class KmViewModel @Inject constructor(
         msg : String
     ){
         val time = Calendar.getInstance().time.toString()
+        val sortTime = Calendar.getInstance().time.time.toString()
+
         val thisMessage = Message(
             sendBy = authenticationId,
             message = msg,
-            timeStamp = time
+            timeStamp = time,
+            sortTime = sortTime
         )
         db.collection(CHATS).document(chatId).collection(MESSAGE).document().set(thisMessage)
     }
