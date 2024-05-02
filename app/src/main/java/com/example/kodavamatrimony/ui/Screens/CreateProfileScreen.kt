@@ -387,8 +387,8 @@ fun ProfileImage(
                 .padding(8.dp)
                 .fillMaxWidth()
                 .clickable {
-                    //                   launcher.launch("image/*")
-                    show.value = true
+                                       launcher.launch("image/*")
+                //    show.value = true
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -415,35 +415,6 @@ fun ProfileImage(
 }
 
 
-@Composable
-fun ImageDialog() {
-    val openDialog = remember { mutableStateOf(true) }
-    if (openDialog.value) {
-        AlertDialog(
-            onDismissRequest = {
-                openDialog.value = false
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        openDialog.value = false
-                    }) {
-                    Text(text = "OK")
-                }
-            },
-            title = {
-                Text(text = "Image Uploaded", fontWeight = FontWeight.Bold)
-            },
-            text = {
-                Text(
-                    text = "Complete the process to see the image displayed",
-                    fontWeight = FontWeight.SemiBold
-                )
-            },
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-    }
-}
 
 @Composable
 fun LauncherDialog() {
