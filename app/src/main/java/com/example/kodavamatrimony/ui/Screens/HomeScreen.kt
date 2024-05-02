@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -72,6 +73,9 @@ fun HomeScreen(
                verticalArrangement = Arrangement.Center,
                horizontalAlignment = Alignment.CenterHorizontally
            ) {
+               
+               
+               
                Row(
                    modifier = Modifier.padding(8.dp),
                    horizontalArrangement = Arrangement.End,
@@ -82,6 +86,26 @@ fun HomeScreen(
                        navigateTo(navController,DestinationScreen.Login.route)
                    }) {
                        Text(text = "Log Out")
+                   }
+               }
+               Card(modifier = Modifier
+                   .height(130.dp)
+                   .fillMaxWidth()
+                   .padding(8.dp),
+                   colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)) {
+                   Row(modifier = Modifier.fillMaxSize(),
+                       horizontalArrangement = Arrangement.Center,
+                       verticalAlignment = Alignment.CenterVertically
+                   ) {
+                       Text(
+                           modifier = Modifier.padding(8.dp),
+                           textAlign = TextAlign.Center,
+                           text = "KODAVA SAMAJA(R) MYSURU",
+                           maxLines = 2,
+                           fontSize =25.sp,
+                           fontFamily = FontFamily.SansSerif,
+                           fontWeight = FontWeight.SemiBold,
+                       )
                    }
                }
                Row(modifier = Modifier.padding(8.dp)) {
