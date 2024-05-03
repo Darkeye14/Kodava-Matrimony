@@ -26,7 +26,7 @@ fun KmNavigation() {
 //implement Splash Screen
 
     val navController = rememberNavController()
-    var viewModel = hiltViewModel<KmViewModel>()
+    val viewModel = hiltViewModel<KmViewModel>()
     NavHost(
         navController = navController,
         startDestination = DestinationScreen.SplashScreen.route
@@ -62,7 +62,6 @@ fun KmNavigation() {
             profileId?.let {
                 DeleteScreen(navController,viewModel, profileId)
             }
-
         }
 
         composable(DestinationScreen.MyProfilesScreen.route){

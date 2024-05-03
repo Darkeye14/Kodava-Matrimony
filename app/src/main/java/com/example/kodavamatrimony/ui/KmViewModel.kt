@@ -495,6 +495,24 @@ class KmViewModel @Inject constructor(
             }
         inProgress.value = false
     }
+    fun onDeleteMyProfile(
+        profileId: String
+    ) {
+        db.collection(USER_NODE)
+         db.collection(USER_NODE).where(
+            Filter.and(
+
+                Filter.equalTo("authId", authenticationId),
+                Filter.equalTo("userId", profileId)
+            )
+        ).get()
+            .addOnSuccessListener { value ->
+               value.documents.mapNotNull {
+                   it.reference.delete()
+               }
+            }
+        inProgress.value = false
+    }
 
     fun onShowBookmark() {
         inProgressProfile.value = true
@@ -531,33 +549,6 @@ class KmViewModel @Inject constructor(
             }
     }
 
-    fun onDelete(
-        profileId: String
-    ) = CoroutineScope(Dispatchers.IO).launch {
-        inProgress.value = true
-        val toBeDeleted = db.collection(USER_NODE).where(
-            Filter.and(
-
-                Filter.equalTo("authId", authenticationId),
-                Filter.equalTo("userId", profileId)
-
-            )
-        ).get().await()
-
-        if (toBeDeleted.documents.isNotEmpty()) {
-
-            for (document in toBeDeleted) {
-                try {
-                    db.collection(USER_NODE).document(document.id).delete().await()
-                } catch (e: Exception) {
-                    handleException(e)
-                }
-                inProgress.value = false
-            }
-        }
-        inProgress.value = false
-
-    }
 
 }
 
