@@ -8,6 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,10 +29,12 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -47,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.kodavamatrimony.R
+import com.example.kodavamatrimony.data.ToggleableInfo
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationItem
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationMenu
@@ -82,7 +87,7 @@ fun CreateProfileScreen(
         },
         modifier = Modifier
             .fillMaxSize()
- // changed color from surface to primCont
+            // changed color from surface to primCont
             .background(MaterialTheme.colorScheme.primaryContainer)
     ) {
         Column(
@@ -115,13 +120,57 @@ fun CreateProfileScreen(
                 mutableStateOf(TextFieldValue())
             }
             val genderState = remember {
-                mutableStateOf(TextFieldValue())
+                mutableStateOf("")
             }
             val requirementsState = remember {
                 mutableStateOf(TextFieldValue())
             }
             val ageState = remember {
                 mutableStateOf(TextFieldValue())
+            }
+            val educationState = remember {
+                mutableStateOf(TextFieldValue())
+            }
+            val timeOfBirthState = remember {
+                mutableStateOf(TextFieldValue())
+            }
+            val settledPlaceState = remember {
+                mutableStateOf(TextFieldValue())
+            }
+            val siblingsState = remember {
+                mutableStateOf(TextFieldValue())
+            }
+            val propertyState = remember {
+                mutableStateOf(TextFieldValue())
+            }
+            val nativeState = remember {
+                mutableStateOf(TextFieldValue())
+            }
+            val heightState = remember {
+                mutableStateOf(TextFieldValue())
+            }
+            val maritalState = remember {
+                mutableStateOf(TextFieldValue())
+            }
+            val professionState = remember {
+                mutableStateOf(TextFieldValue())
+            }
+
+
+
+
+            val radioButtons = remember {
+                mutableStateListOf(
+                    ToggleableInfo(
+
+                        isChecked = false,
+                        text = "Boy"
+                    ),
+                    ToggleableInfo(
+                        isChecked = false,
+                        text = "Girl"
+                    )
+                )
             }
 
             Image(
@@ -145,29 +194,35 @@ fun CreateProfileScreen(
 
             ProfileImage(imageUrl = imageUrl, viewModel = viewModel)
 
-            OutlinedTextField(
-                value = genderState.value,
-                onValueChange = {
-                    genderState.value = it
-                },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
-                ),
-                placeholder = {
-                    Text(
-                        text = "(Boy/Girl) *Mandatory Field",
-                        modifier = Modifier
-                            .padding(8.dp)
+            Spacer(modifier = Modifier.padding(12.dp))
+
+            radioButtons.forEachIndexed { index, info ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clickable {
+                            radioButtons.replaceAll {
+                                it.copy(
+                                    isChecked = it.text == info.text
+                                )
+                            }
+                        }
+                        .padding(end = 16.dp)
+                ) {
+                    RadioButton(
+                        selected = info.isChecked,
+                        onClick = {
+                            radioButtons.replaceAll {
+                                it.copy(
+                                    isChecked = it.text == info.text
+                                )
+                            }
+                            genderState.value = info.text
+                        }
                     )
-                },
-                label = {
-                    Text(
-                        text = "Gender",
-                        modifier = Modifier
-                            .padding(8.dp)
-                    )
+                    Text(text = info.text)
                 }
-            )
+            }
 
             OutlinedTextField(
                 value = nameState.value,
@@ -288,6 +343,170 @@ fun CreateProfileScreen(
                     imeAction = ImeAction.Done
                 )
             )
+            OutlinedTextField(
+                value = timeOfBirthState.value,
+                onValueChange = {
+                    timeOfBirthState.value = it
+                },
+                placeholder = {
+                    Text(
+                        text = "Hr:Min:Sec AM/PM",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                },
+                label = {
+                    Text(
+                        text = "Time Of Birth",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                )
+            )
+            OutlinedTextField(
+                value = heightState.value,
+                onValueChange = {
+                    heightState.value = it
+                },
+                label = {
+                    Text(
+                        text = "Height",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                )
+            )
+
+            OutlinedTextField(
+                value = siblingsState.value,
+                onValueChange = {
+                    siblingsState.value = it
+                },
+                label = {
+                    Text(
+                        text = "Siblings",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                )
+            )
+            OutlinedTextField(
+                value = maritalState.value,
+                onValueChange = {
+                    maritalState.value = it
+                },
+                label = {
+                    Text(
+                        text = "Marital Status",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                )
+            )
+
+            OutlinedTextField(
+                value = nativeState.value,
+                onValueChange = {
+                    nativeState.value = it
+                },
+                label = {
+                    Text(
+                        text = "Native Place",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                )
+            )
+
+            OutlinedTextField(
+                value = educationState.value,
+                onValueChange = {
+                    educationState.value = it
+                },
+                label = {
+                    Text(
+                        text = "Qualification",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                )
+            )
+
+            OutlinedTextField(
+                value = professionState.value,
+                onValueChange = {
+                    professionState.value = it
+                },
+                label = {
+                    Text(
+                        text = "Profession Details",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                )
+            )
+
+            OutlinedTextField(
+                value = settledPlaceState.value,
+                onValueChange = {
+                    settledPlaceState.value = it
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                label = {
+                    Text(
+                        text = "Settled Place",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                }
+            )
+
+            OutlinedTextField(
+                value = propertyState.value,
+                onValueChange = {
+                    propertyState.value = it
+                },
+                placeholder = {
+                    Text(
+                        text = "Optional",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                },
+                label = {
+                    Text(
+                        text = "Property info",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                )
+            )
 
             OutlinedTextField(
                 value = descriptionState.value,
@@ -304,7 +523,7 @@ fun CreateProfileScreen(
                 singleLine = false,
                 label = {
                     Text(
-                        text = "Description",
+                        text = "More Info",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -326,7 +545,7 @@ fun CreateProfileScreen(
 
                 label = {
                     Text(
-                        text = "Requirements",
+                        text = "Partner Preference",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -344,7 +563,16 @@ fun CreateProfileScreen(
                         age = ageState.value.text,
                         description = descriptionState.value.text,
                         requirement = requirementsState.value.text,
-                        gender = genderState.value.text.uppercase(Locale.ROOT)
+                        gender = genderState.value,
+                        settledPlace = settledPlaceState.value.text,
+                        education = educationState.value.text,
+                        timeOfBirth = timeOfBirthState.value.text,
+                        siblings = siblingsState.value.text,
+                        property = propertyState.value.text,
+                        maritalStatus = maritalState.value.text,
+                        height = heightState.value.text,
+                        native = nativeState.value.text,
+                        profession = professionState.value.text
                     )
                     navigateTo(navController, DestinationScreen.HomeScreen.route)
                     viewModel.onAddedProfile(nameState.value.text)
@@ -360,7 +588,6 @@ fun CreateProfileScreen(
         }
     }
 }
-
 
 @Composable
 fun ProfileImage(
@@ -387,8 +614,8 @@ fun ProfileImage(
                 .padding(8.dp)
                 .fillMaxWidth()
                 .clickable {
-                        //               launcher.launch("image/*")
-                //    show.value = true
+                    //               launcher.launch("image/*")
+                    //    show.value = true
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -413,7 +640,6 @@ fun ProfileImage(
         }
     }
 }
-
 
 
 @Composable

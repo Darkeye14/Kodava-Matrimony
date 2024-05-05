@@ -294,7 +294,17 @@ class KmViewModel @Inject constructor(
         description: String? = null,
         requirement: String? = null,
         imageUrl: String? = null,
-        gender: String? = null
+        gender: String? = null,
+        education: String? = null,
+        timeOfBirth: String? = null,
+        settledPlace: String? = null,
+        siblings: String? = null,
+        property: String? = null,
+        native: String? = null,
+        height: String? = null,
+        maritalStatus: String? = null,
+        profession: String? = null,
+
     ) {
         val uid = UUID.randomUUID().toString()
         val userData = UserData(
@@ -309,7 +319,16 @@ class KmViewModel @Inject constructor(
             description = description ?: userData.value?.number,
             requirement = requirement ?: userData.value?.number,
             imageUrl = imageUrl ?: userData.value?.imageUrl,
-            gender = gender ?: userData.value?.gender
+            gender = gender ?: userData.value?.gender,
+            timeOfBirth = timeOfBirth ?: userData.value?.timeOfBirth,
+            location = settledPlace ?: userData.value?.location,
+            education = education ?: userData.value?.education,
+            property = property ?: userData.value?.property,
+            siblings = siblings ?: userData.value?.siblings,
+            nativePlace = native ?: userData.value?.nativePlace,
+            height = height ?: userData.value?.height,
+            maritalStatus = maritalStatus ?: userData.value?.maritalStatus,
+            profession = profession ?: userData.value?.profession
         )
         uid.let {
             inProgress.value = true
