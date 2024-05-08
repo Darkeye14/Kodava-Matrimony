@@ -56,7 +56,7 @@ fun DeleteScreen(
             horizontalArrangement = Arrangement.Center
         ) {
             CircularProgressIndicator(color = MaterialTheme.colorScheme.error)
-            viewModel.onDeleteMyProfile(profileId)
+            viewModel.onDeleteProfile(profileId)
             navigateTo(navController,DestinationScreen.SearchScreen.route)
         }
     }

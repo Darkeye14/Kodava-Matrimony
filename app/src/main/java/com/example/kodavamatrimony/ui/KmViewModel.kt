@@ -30,6 +30,8 @@ import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.Calendar
@@ -38,7 +40,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class KmViewModel @Inject constructor(
-    private val auth: FirebaseAuth,
+    val auth: FirebaseAuth,
     private var db: FirebaseFirestore,
     private val storage: FirebaseStorage
 ) : ViewModel() {
@@ -48,7 +50,6 @@ class KmViewModel @Inject constructor(
     var inProgressProfile = mutableStateOf(false)
     val eventMutableState = mutableStateOf<SignUpEvent<String?>?>(null)
     var signIn = mutableStateOf(false)
-    val authenticationId = auth.currentUser?.uid
     val userData = mutableStateOf<UserData?>(null)
     val creatingProfile = mutableStateOf(false)
     val profiles = mutableStateOf<List<UserData>>(listOf())
@@ -112,7 +113,7 @@ class KmViewModel @Inject constructor(
                     val chatPartnerAuth = chatPartner.authId
 
                     db.collection(ACCOUNTS)
-                        .whereEqualTo("authId", authenticationId)
+                        .whereEqualTo("authId", auth.currentUser?.uid)
                         .get()
                         .addOnSuccessListener {
                             val myName = it.toObjects<UserData>()[0].name
@@ -121,13 +122,13 @@ class KmViewModel @Inject constructor(
                                 .where(
                                     Filter.or(
                                         Filter.and(
-                                            Filter.equalTo("user1.accId", authenticationId),
+                                            Filter.equalTo("user1.accId", auth.currentUser?.uid),
                                             Filter.equalTo("user2.accId", chatPartnerAuth)
                                         ),
                                         //chat already exists anta
                                         Filter.and(
                                             Filter.equalTo("user1.accId", chatPartnerAuth),
-                                            Filter.equalTo("user2.accId", authenticationId)
+                                            Filter.equalTo("user2.accId", auth.currentUser?.uid)
                                         )
                                     )
                                 ).get()
@@ -137,7 +138,7 @@ class KmViewModel @Inject constructor(
                                             ChatData(
                                                 chatId = chatId,
                                                 user1 = ChatUser(
-                                                    accId = authenticationId,
+                                                    accId = auth.currentUser?.uid,
                                                     name = myName ?: "Anonymous"
                                                 ),
                                                 user2 = ChatUser(
@@ -164,8 +165,8 @@ class KmViewModel @Inject constructor(
         inProgressChat.value = true
         db.collection(CHATS).where(
             Filter.or(
-                Filter.equalTo("user1.accId", authenticationId),
-                Filter.equalTo("user2.accId", authenticationId)
+                Filter.equalTo("user1.accId", auth.currentUser?.uid),
+                Filter.equalTo("user2.accId", auth.currentUser?.uid)
             )
 
         ).addSnapshotListener { value, error ->
@@ -188,7 +189,7 @@ class KmViewModel @Inject constructor(
         val sortTime = Calendar.getInstance().time.time.toString()
 
         val thisMessage = Message(
-            sendBy = authenticationId,
+            sendBy = auth.currentUser?.uid,
             message = msg,
             timeStamp = time,
             sortTime = sortTime
@@ -201,7 +202,7 @@ class KmViewModel @Inject constructor(
         password: String,
         navController: NavController
 
-    ) {
+    ) = CoroutineScope(Dispatchers.IO).launch{
         if (email.isEmpty() || password.isEmpty()) {
             handleException(customMessage = "Please fill all the fields")
 
@@ -210,22 +211,29 @@ class KmViewModel @Inject constructor(
             auth.signInWithEmailAndPassword(email, password)
                 .addOnFailureListener {
                     handleException( customMessage = "Login failed")
-
                 }
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
                         signIn.value = true
                         inProgress.value = false
-                        authenticationId?.let {
+                        auth.currentUser?.uid?.let {
                             getUserData(it)
                         }
-                        navigateTo(navController, DestinationScreen.AfterLoginScreen.route)
+                        afterLogin(navController)
                     } else {
                         handleException(it.exception, customMessage = "Login failed")
                     }
+
                 }
+                .await()
         }
     }
+private fun afterLogin(
+    navController: NavController
+)= CoroutineScope(Dispatchers.Main).launch{
+    delay(500)
+    navigateTo(navController,DestinationScreen.HomeScreen.route)
+}
 
     fun logout() {
         signIn.value = false
@@ -234,36 +242,34 @@ class KmViewModel @Inject constructor(
         auth.signOut()
         currentChatMessageListener = null
     }
-
-    fun signUp(
+    fun signUp1(
         name: String,
         email: String,
         password: String,
         navController: NavController
-    ) {
+    ) = CoroutineScope(Dispatchers.IO).launch {
         inProgress.value = true
         if (email.isEmpty() or password.isEmpty()) {
             handleException(customMessage = "Please Fill All The Fields")
-            return
         }
-        inProgress.value = true
 
         auth.createUserWithEmailAndPassword(email, password)
+
             .addOnFailureListener {
                 handleException(it)
             }
             .addOnCompleteListener {
+
                 if (it.isSuccessful) {
                     createAccount(name, email, password)
+                    signIn.value = true
                     inProgress.value = false
                     navigateTo(navController, DestinationScreen.HomeScreen.route)
                 } else {
                     handleException(customMessage = " SignUp error")
                 }
             }
-            .addOnFailureListener {
-                handleException(it)
-            }
+
 
     }
 
@@ -271,12 +277,14 @@ class KmViewModel @Inject constructor(
         name: String,
         email: String,
         pwd: String
-    ) {
+    ) = CoroutineScope(Dispatchers.IO).launch {
+        delay(1000)
         val acc = Account(
             name = name,
             emailId = email,
             pwd = pwd,
-            authId = authenticationId
+            authId = auth.currentUser?.uid
+
         )
         db.collection(ACCOUNTS)
             .document()
@@ -309,7 +317,7 @@ class KmViewModel @Inject constructor(
         val uid = UUID.randomUUID().toString()
         val userData = UserData(
             userId = uid,
-            authId = authenticationId,
+            authId = auth.currentUser?.uid,
             name = name ?: userData.value?.name,
             familyName = familyName ?: userData.value?.name,
             number = number ?: userData.value?.number,
@@ -393,9 +401,9 @@ class KmViewModel @Inject constructor(
     fun getMyProfilesData() {
 
         inProgress.value = true
-        if (authenticationId != null) {
+        if (auth.currentUser?.uid != null) {
             db.collection(USER_NODE)
-                .document(authenticationId)
+                .document(auth.currentUser?.uid!!)
                 .addSnapshotListener { value, error ->
                     if (error != null) {
                         handleException(error, "cannot retrieve user")
@@ -506,7 +514,7 @@ class KmViewModel @Inject constructor(
                     }
 
                     val bmk = Bookmark(
-                        authenticationId,
+                        auth.currentUser?.uid,
                         myBookmarks.value[0]
                     )
                     db.collection(BOOKMARK).document().set(bmk)
@@ -514,29 +522,31 @@ class KmViewModel @Inject constructor(
             }
         inProgress.value = false
     }
-    fun onDeleteMyProfile(
+
+    fun onDeleteProfile(
         profileId: String
-    ) {
-        db.collection(USER_NODE)
-         db.collection(USER_NODE).where(
+    ) = CoroutineScope(Dispatchers.IO).launch {
+        inProgress.value = true
+        db.collection(USER_NODE).where(
             Filter.and(
 
-                Filter.equalTo("authId", authenticationId),
+                Filter.equalTo("authId", auth.currentUser?.uid),
                 Filter.equalTo("userId", profileId)
             )
         ).get()
             .addOnSuccessListener { value ->
-               value.documents.mapNotNull {
-                   it.reference.delete()
-               }
+                value.documents.mapNotNull {
+                    it.reference.delete()
+                }
             }
+            .await()
         inProgress.value = false
     }
 
     fun onShowBookmark() {
         inProgressProfile.value = true
         db.collection(BOOKMARK)
-            .whereEqualTo("authenticationId", authenticationId)
+            .whereEqualTo("authenticationId", auth.currentUser?.uid)
             .addSnapshotListener { value, error ->
                 if (error != null) {
                     handleException(error, "cannot retrieve user")
@@ -554,7 +564,7 @@ class KmViewModel @Inject constructor(
     fun onCreateProfile() {
         inProgressProfile.value = true
         db.collection(USER_NODE)
-            .whereEqualTo("authId", authenticationId)
+            .whereEqualTo("authId", auth.currentUser?.uid)
             .addSnapshotListener { value, error ->
                 if (error != null) {
                     handleException(error, "cannot retrieve user")

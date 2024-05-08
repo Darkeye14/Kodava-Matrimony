@@ -223,6 +223,11 @@ fun CreateProfileScreen(
                     Text(text = info.text)
                 }
             }
+            
+            Text(
+                text = "* None of the fields are mandatory!!",
+                color = MaterialTheme.colorScheme.error
+            )
 
             OutlinedTextField(
                 value = nameState.value,

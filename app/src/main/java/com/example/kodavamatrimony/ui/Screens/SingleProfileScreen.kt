@@ -221,9 +221,7 @@ fun Dialog(
     navController: NavController,
     viewModel: KmViewModel
 ) {
-    val chatName = remember {
-        mutableStateOf("")
-    }
+
     val openDialog = remember { mutableStateOf(true) }
     if (openDialog.value) {
         AlertDialog(

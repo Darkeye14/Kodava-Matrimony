@@ -143,7 +143,7 @@ fun ChatListScreen(
                 }
                 items(chats) { chat ->
                     val chatUser =
-                        if (chat.user1.accId == viewModel.authenticationId)
+                        if (chat.user1.accId == viewModel.auth.currentUser?.uid)
                             chat.user2
                         else
                             chat.user1
