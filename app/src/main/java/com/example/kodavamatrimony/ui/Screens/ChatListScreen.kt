@@ -35,17 +35,16 @@ import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationItem
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationMenu
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
+import com.example.kodavamatrimony.ui.Utility.ChatCard
 import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
-import com.example.kodavamatrimony.ui.Utility.ProfileCard
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SavedScreen(
-    navController: NavController,
-    viewModel: KmViewModel
+fun ChatListScreen(
+    viewModel: KmViewModel,
+    navController: NavController
 ) {
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -60,15 +59,16 @@ fun SavedScreen(
         },
         bottomBar = {
             BottomNavigationMenu(
-                selectedItem = BottomNavigationItem.HOMELIST,
+                selectedItem = BottomNavigationItem.SEARCHLIST,
                 navController = navController
             )
         }
     ) {
+        viewModel.depopulateMessages()
         if (viewModel.inProgressProfile.value) {
             CommonProgressBar()
         }
-        val profiles = viewModel.myBookmarksData.value
+        val profiles = viewModel.profiles.value
         if (profiles.isEmpty()) {
 
             Column(
@@ -109,6 +109,7 @@ fun SavedScreen(
                 )
             }
         } else {
+            val chats = viewModel.chats.value
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -140,18 +141,21 @@ fun SavedScreen(
                         }
                     }
                 }
-                items(profiles) { profile ->
+                items(chats) { chat ->
+                    val chatUser =
+                        if (chat.user1.accId == viewModel.authenticationId)
+                            chat.user2
+                        else
+                            chat.user1
 
-                    profile.data?.let { it1 ->
-                        ProfileCard(
-                            profile = it1,
+                    chat.chatId?.let {
+                        ChatCard(
+                            name = chatUser.name,
                             onItemClick = {
-                                profile.data?.userId?.let {
-                                    navigateTo(
-                                        navController,
-                                        DestinationScreen.SingleProfileScreen.createRoute(id = it)
-                                    )
-                                }
+                                navigateTo(
+                                    navController,
+                                    DestinationScreen.SingleChatScreen.createRoute(it)
+                                )
                             }
                         )
                     }

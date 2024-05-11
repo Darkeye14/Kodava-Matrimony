@@ -4,13 +4,20 @@ import SearchScreen
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.kodavamatrimony.ui.KmViewModel
+import com.example.kodavamatrimony.ui.Screens.AfterLoginScreen
+import com.example.kodavamatrimony.ui.Screens.ChatListScreen
 import com.example.kodavamatrimony.ui.Screens.CreateProfileScreen
+import com.example.kodavamatrimony.ui.Screens.DeleteScreen
 import com.example.kodavamatrimony.ui.Screens.HomeScreen
 import com.example.kodavamatrimony.ui.Screens.LoginScreen
+import com.example.kodavamatrimony.ui.Screens.MyProfilesSscreen
+import com.example.kodavamatrimony.ui.Screens.SavedScreen
 import com.example.kodavamatrimony.ui.Screens.SignUpScreen
+import com.example.kodavamatrimony.ui.Screens.SingleChatScreen
+import com.example.kodavamatrimony.ui.Screens.SingleProfileScreen
 import com.example.kodavamatrimony.ui.Screens.SplashScreen
 
 @Composable
@@ -30,14 +37,48 @@ fun KmNavigation() {
         composable(DestinationScreen.SignUp.route){
             SignUpScreen(navController,viewModel)
         }
+        composable(DestinationScreen.AfterLoginScreen.route){
+            AfterLoginScreen()
+        }
         composable(DestinationScreen.HomeScreen.route){
-            HomeScreen(navController)
+            HomeScreen(navController,viewModel)
+        }
+        composable(DestinationScreen.SingleProfileScreen.route){
+            val profileId = it.arguments?.getString("profileId")
+            profileId?.let {
+                SingleProfileScreen(navController,viewModel, profileId)
+            }
+
+        }
+        composable(DestinationScreen.SingleChatScreen.route){
+            val chatId = it.arguments?.getString("chatId")
+            chatId?.let {
+                SingleChatScreen(navController,viewModel, chatId)
+            }
+
+        }
+        composable(DestinationScreen.DeleteScreen.route){
+            val profileId = it.arguments?.getString("profileId")
+            profileId?.let {
+                DeleteScreen(navController,viewModel, profileId)
+            }
+
+        }
+
+        composable(DestinationScreen.MyProfilesScreen.route){
+           MyProfilesSscreen(navController,viewModel)
         }
         composable(DestinationScreen.SearchScreen.route){
-            SearchScreen(navController)
+            SearchScreen(navController,viewModel)
         }
         composable(DestinationScreen.Login.route){
             LoginScreen(viewModel,navController)
+        }
+        composable(DestinationScreen.ChatListScreen.route){
+            ChatListScreen(viewModel,navController)
+        }
+        composable(DestinationScreen.SavedScreen.route){
+            SavedScreen(navController = navController, viewModel = viewModel)
         }
         composable(DestinationScreen.CreateProfileScreen.route){
             CreateProfileScreen(navController = navController, viewModel = viewModel)

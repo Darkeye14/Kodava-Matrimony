@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,7 +33,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,8 +50,11 @@ import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationItem
 import com.example.kodavamatrimony.ui.Navigation.BottomNavigationMenu
+import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.example.kodavamatrimony.ui.Utility.CommonImage
 import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
+import com.example.kodavamatrimony.ui.Utility.navigateTo
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,26 +62,29 @@ fun CreateProfileScreen(
     navController: NavController,
     viewModel: KmViewModel
 ) {
-    Scaffold(bottomBar = {
-        BottomNavigationMenu(
-            selectedItem = BottomNavigationItem.CREATEPROFILELIST,
-            navController = navController,
+    Scaffold(
+        bottomBar = {
+            BottomNavigationMenu(
+                selectedItem = BottomNavigationItem.CREATEPROFILELIST,
+                navController = navController,
             )
-    },topBar = {
-        CenterAlignedTopAppBar(
-            title = {
-                Text(text = stringResource(id = R.string.app_name))
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.onPrimary
+        },
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(text = stringResource(id = R.string.app_name))
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
             )
-        )
-    },
+        },
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
-    ){
+ // changed color from surface to primCont
+            .background(MaterialTheme.colorScheme.primaryContainer)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -88,7 +93,7 @@ fun CreateProfileScreen(
                 .background(MaterialTheme.colorScheme.primaryContainer)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             val imageUrl = viewModel.userData.value?.imageUrl
 
             val nameState = remember {
@@ -109,14 +114,18 @@ fun CreateProfileScreen(
             val descriptionState = remember {
                 mutableStateOf(TextFieldValue())
             }
+            val genderState = remember {
+                mutableStateOf(TextFieldValue())
+            }
             val requirementsState = remember {
                 mutableStateOf(TextFieldValue())
             }
             val ageState = remember {
                 mutableStateOf(TextFieldValue())
             }
-            val focus = LocalFocusManager.current
-            Image(painter = painterResource(id = R.drawable.love),
+
+            Image(
+                painter = painterResource(id = R.drawable.love),
                 contentDescription = "Create Profile",
                 modifier = Modifier
                     .width(200.dp)
@@ -125,23 +134,49 @@ fun CreateProfileScreen(
 
             )
 
-            Text(text = "Create Profile",
+            Text(
+                text = "Create Profile",
                 fontSize = 30.sp,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(8.dp)
             )
- //Add profile pic
-            
+            //Add profile pic
+
             ProfileImage(imageUrl = imageUrl, viewModel = viewModel)
 
             OutlinedTextField(
+                value = genderState.value,
+                onValueChange = {
+                    genderState.value = it
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                placeholder = {
+                    Text(
+                        text = "(Boy/Girl) *Mandatory Field",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                },
+                label = {
+                    Text(
+                        text = "Gender",
+                        modifier = Modifier
+                            .padding(8.dp)
+                    )
+                }
+            )
+
+            OutlinedTextField(
                 value = nameState.value,
-                onValueChange ={
+                onValueChange = {
                     nameState.value = it
                 },
                 placeholder = {
-                    Text(text = "Full name including Mane Peda",
+                    Text(
+                        text = "Full name including Mane Peda",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -150,7 +185,8 @@ fun CreateProfileScreen(
                     imeAction = ImeAction.Done
                 ),
                 label = {
-                    Text(text = "Name",
+                    Text(
+                        text = "Name",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -159,14 +195,15 @@ fun CreateProfileScreen(
 
             OutlinedTextField(
                 value = familyNameState.value,
-                onValueChange ={
+                onValueChange = {
                     familyNameState.value = it
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
                 label = {
-                    Text(text = "Family Name (Mane Peda)",
+                    Text(
+                        text = "Family Name (Mane Peda)",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -174,14 +211,15 @@ fun CreateProfileScreen(
             )
             OutlinedTextField(
                 value = fatherNameState.value,
-                onValueChange ={
+                onValueChange = {
                     fatherNameState.value = it
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
                 label = {
-                    Text(text = "Father's Name",
+                    Text(
+                        text = "Father's Name",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -189,20 +227,22 @@ fun CreateProfileScreen(
             )
             OutlinedTextField(
                 value = motherNameState.value,
-                onValueChange ={
+                onValueChange = {
                     motherNameState.value = it
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
                 placeholder = {
-                    Text(text = "Include Tamane",
+                    Text(
+                        text = "Include Tamane",
                         modifier = Modifier
                             .padding(8.dp)
                     )
                 },
                 label = {
-                    Text(text = "Mother's Name",
+                    Text(
+                        text = "Mother's Name",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -211,11 +251,12 @@ fun CreateProfileScreen(
 
             OutlinedTextField(
                 value = numberState.value,
-                onValueChange ={
+                onValueChange = {
                     numberState.value = it
                 },
                 label = {
-                    Text(text = "Phone Number",
+                    Text(
+                        text = "Phone Number",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -226,17 +267,19 @@ fun CreateProfileScreen(
             )
             OutlinedTextField(
                 value = ageState.value,
-                onValueChange ={
+                onValueChange = {
                     ageState.value = it
                 },
                 placeholder = {
-                    Text(text = "dd-mm-yyyy",
+                    Text(
+                        text = "dd-mm-yyyy",
                         modifier = Modifier
                             .padding(8.dp)
                     )
                 },
                 label = {
-                    Text(text = "Date of Birth",
+                    Text(
+                        text = "Date of Birth",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -248,21 +291,20 @@ fun CreateProfileScreen(
 
             OutlinedTextField(
                 value = descriptionState.value,
-                onValueChange ={
+                onValueChange = {
                     descriptionState.value = it
                 },
                 placeholder = {
-                    Text(text = stringResource(id = R.string.description),
+                    Text(
+                        text = stringResource(id = R.string.description),
                         modifier = Modifier
                             .padding(8.dp)
                     )
                 },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
-                ),
                 singleLine = false,
                 label = {
-                    Text(text = "Description",
+                    Text(
+                        text = "Description",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -270,39 +312,42 @@ fun CreateProfileScreen(
             )
             OutlinedTextField(
                 value = requirementsState.value,
-                onValueChange ={
+                onValueChange = {
                     requirementsState.value = it
                 },
                 placeholder = {
-                    Text(text = stringResource(id = R.string.requirements),
+                    Text(
+                        text = stringResource(id = R.string.requirements),
                         modifier = Modifier
                             .padding(8.dp)
                     )
                 },
                 singleLine = false,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
-                ),
+
                 label = {
-                    Text(text = "Requirements",
+                    Text(
+                        text = "Requirements",
                         modifier = Modifier
                             .padding(8.dp)
                     )
                 }
             )
+            //Called here
             Button(
                 onClick = {
-
                     viewModel.createOrUpdateProfile(
-                        nameState.value.text,
-                        familyNameState.value.text,
-                        numberState.value.text,
-                        fatherNameState.value.text,
-                        motherNameState.value.text,
-                        ageState.value.text,
-                        descriptionState.value.text,
-
+                        name = nameState.value.text,
+                        familyName = familyNameState.value.text,
+                        number = numberState.value.text,
+                        fathersName = fatherNameState.value.text,
+                        mothersName = motherNameState.value.text,
+                        age = ageState.value.text,
+                        description = descriptionState.value.text,
+                        requirement = requirementsState.value.text,
+                        gender = genderState.value.text.uppercase(Locale.ROOT)
                     )
+                    navigateTo(navController, DestinationScreen.HomeScreen.route)
+                    viewModel.onAddedProfile(nameState.value.text)
                 },
                 modifier = Modifier
                     .padding(8.dp)
@@ -310,12 +355,11 @@ fun CreateProfileScreen(
                 Text(text = "CREATE PROFILE")
             }
         }
-        if(viewModel.inProgress.value ){
+        if (viewModel.inProgress.value) {
             CommonProgressBar()
         }
     }
 }
-
 
 
 @Composable
@@ -323,23 +367,28 @@ fun ProfileImage(
     imageUrl: String?,
     viewModel: KmViewModel
 ) {
+    val show = remember {
+        mutableStateOf(false)
+    }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) {uri ->
+    ) { uri ->
         uri?.let {
             viewModel.uploadProfileImage(uri)
         }
     }
+
     Box(
         modifier = Modifier
             .height(intrinsicSize = IntrinsicSize.Min)
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .padding(8.dp)
                 .fillMaxWidth()
                 .clickable {
-                    launcher.launch("image/*")
+                        //               launcher.launch("image/*")
+                //    show.value = true
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -351,12 +400,48 @@ fun ProfileImage(
                 colors = CardDefaults.cardColors(Color.Gray)
 
             ) {
-                CommonImage(data = imageUrl)
+                // for image           CommonImage(data = imageUrl)
+                if (show.value == true) {
+                    LauncherDialog()
+                }
+
             }
             Text(text = "Change Profile Picture")
         }
-        if (viewModel.inProgress.value){
+        if (viewModel.inProgress.value) {
             CommonProgressBar()
         }
+    }
+}
+
+
+
+@Composable
+fun LauncherDialog() {
+    val openDialog = remember { mutableStateOf(true) }
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        openDialog.value = false
+                    }) {
+                    Text(text = "OK")
+                }
+            },
+            title = {
+                Text(text = "Feature not Available yet", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text(
+                    text = "This Feature will be available in future updates. We apologise for the inconvenience",
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     }
 }

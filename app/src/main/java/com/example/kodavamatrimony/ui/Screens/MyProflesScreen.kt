@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -41,7 +43,7 @@ import com.example.kodavamatrimony.ui.Utility.navigateTo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SavedScreen(
+fun MyProfilesSscreen(
     navController: NavController,
     viewModel: KmViewModel
 ) {
@@ -68,7 +70,7 @@ fun SavedScreen(
         if (viewModel.inProgressProfile.value) {
             CommonProgressBar()
         }
-        val profiles = viewModel.myBookmarksData.value
+        val profiles = viewModel.myProfiles.value
         if (profiles.isEmpty()) {
 
             Column(
@@ -109,6 +111,8 @@ fun SavedScreen(
                 )
             }
         } else {
+
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -142,21 +146,20 @@ fun SavedScreen(
                 }
                 items(profiles) { profile ->
 
-                    profile.data?.let { it1 ->
-                        ProfileCard(
-                            profile = it1,
-                            onItemClick = {
-                                profile.data?.userId?.let {
-                                    navigateTo(
-                                        navController,
-                                        DestinationScreen.SingleProfileScreen.createRoute(id = it)
-                                    )
-                                }
+                    ProfileCard(
+                        profile = profile,
+                        onItemClick = {
+                            profile.userId?.let {
+                                navigateTo(
+                                    navController,
+                                    DestinationScreen.SingleProfileScreen.createRoute(id = it)
+                                )
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             }
         }
     }
 }
+

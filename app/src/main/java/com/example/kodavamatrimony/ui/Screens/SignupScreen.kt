@@ -10,11 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,8 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,37 +38,47 @@ import androidx.navigation.NavController
 import com.example.kodavamatrimony.R
 import com.example.kodavamatrimony.ui.KmViewModel
 import com.example.kodavamatrimony.ui.Navigation.DestinationScreen
-import com.example.kodavamatrimony.ui.Utility.CheckSignedIn
 import com.example.kodavamatrimony.ui.Utility.CommonProgressBar
 import com.example.kodavamatrimony.ui.Utility.navigateTo
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(navController: NavController ,
                  viewModel: KmViewModel
 ) {
 
-    Box(
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(text = stringResource(id = R.string.app_name))
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        },
         modifier = Modifier
             .fillMaxSize()
-    ){
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
         Column(
             modifier = Modifier
+                .padding(it)
                 .fillMaxSize()
-                .wrapContentHeight()
                 .verticalScroll(rememberScrollState())
                 .background(color = MaterialTheme.colorScheme.primaryContainer),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            val nameState = remember {
-                mutableStateOf(TextFieldValue())
-            }
+
             val emailState = remember {
                 mutableStateOf(TextFieldValue())
             }
-            val numberState = remember {
+            val passwordState = remember {
                 mutableStateOf(TextFieldValue())
             }
-            val passwordState = remember {
+            val nameState = remember {
                 mutableStateOf(TextFieldValue())
             }
             val focus = LocalFocusManager.current
@@ -79,11 +96,15 @@ fun SignUpScreen(navController: NavController ,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(8.dp)
             )
+
             OutlinedTextField(
                 value = nameState.value,
                 onValueChange ={
                     nameState.value = it
                 },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
                 label = {
                     Text(text = "Name",
                         modifier = Modifier
@@ -91,28 +112,23 @@ fun SignUpScreen(navController: NavController ,
                     )
                 }
             )
-            OutlinedTextField(
-                value = numberState.value,
-                onValueChange ={
-                    numberState.value = it
-                },
-                label = {
-                    Text(text = "Number",
-                        modifier = Modifier
-                            .padding(8.dp)
-                    )
-                }
-            )
+
             OutlinedTextField(
                 value = emailState.value,
                 onValueChange ={
                     emailState.value = it
                 },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
                 label = {
                     Text(text = "Email",
                         modifier = Modifier
                             .padding(8.dp)
                     )
+                },
+                placeholder = {
+                    Text(text = "Ex: abcd@gmail.com")
                 }
             )
             OutlinedTextField(
@@ -120,8 +136,14 @@ fun SignUpScreen(navController: NavController ,
                 onValueChange ={
                     passwordState.value = it
                 },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                placeholder = {
+                    Text(text = " Ex: abcd1234")
+                },
                 label = {
-                    Text(text = "Password",
+                    Text(text = "Password (Alphanumeric)",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -129,14 +151,13 @@ fun SignUpScreen(navController: NavController ,
             )
             Button(
                 onClick = {
-                          viewModel.signUp(
-                              nameState.value.text,
-                              numberState.value.text,
-                              emailState.value.text.trim(),
-                              passwordState.value.text.trim(),
-                              navController
-                          )
-    //careful
+                    viewModel.signUp(
+                        nameState.value.text.trim(),
+                        emailState.value.text.trim(),
+                        passwordState.value.text.trim(),
+                        navController
+                    )
+                    //careful
 
                 },
                 modifier = Modifier
