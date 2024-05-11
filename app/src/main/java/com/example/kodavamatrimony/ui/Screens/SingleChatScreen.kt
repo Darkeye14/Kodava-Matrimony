@@ -55,7 +55,7 @@ fun SingleChatScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {val myUser = viewModel.authenticationId
+                title = {val myUser = viewModel.auth.currentUser?.uid
                     val currentChat = viewModel.chats.value.first{it.chatId == chatId}
                     val chatUser = if (myUser == currentChat.user1.accId) currentChat.user2
                     else currentChat.user1
@@ -138,7 +138,7 @@ fun MessageCard(msg :String?,time : String?,sentBy: String?,viewModel: KmViewMod
         modifier = Modifier
             .padding(8.dp)
             .wrapContentSize(),
-        colors = if (sentBy == viewModel.authenticationId)
+        colors = if (sentBy == viewModel.auth.currentUser?.uid)
          CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
         else
             CardDefaults.cardColors(MaterialTheme.colorScheme.tertiary)

@@ -7,7 +7,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.kodavamatrimony.ui.KmViewModel
-import com.example.kodavamatrimony.ui.Screens.AfterLoginScreen
 import com.example.kodavamatrimony.ui.Screens.ChatListScreen
 import com.example.kodavamatrimony.ui.Screens.CreateProfileScreen
 import com.example.kodavamatrimony.ui.Screens.DeleteScreen
@@ -26,7 +25,7 @@ fun KmNavigation() {
 //implement Splash Screen
 
     val navController = rememberNavController()
-    var viewModel = hiltViewModel<KmViewModel>()
+    val viewModel = hiltViewModel<KmViewModel>()
     NavHost(
         navController = navController,
         startDestination = DestinationScreen.SplashScreen.route
@@ -36,9 +35,6 @@ fun KmNavigation() {
         }
         composable(DestinationScreen.SignUp.route){
             SignUpScreen(navController,viewModel)
-        }
-        composable(DestinationScreen.AfterLoginScreen.route){
-            AfterLoginScreen()
         }
         composable(DestinationScreen.HomeScreen.route){
             HomeScreen(navController,viewModel)
@@ -62,7 +58,6 @@ fun KmNavigation() {
             profileId?.let {
                 DeleteScreen(navController,viewModel, profileId)
             }
-
         }
 
         composable(DestinationScreen.MyProfilesScreen.route){

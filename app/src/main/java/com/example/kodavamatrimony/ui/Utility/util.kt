@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
@@ -130,9 +131,9 @@ fun ProfileCard(
                     .fillMaxWidth()
                     .height(162.dp)
                     .padding(12.dp)
-                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                    .background(MaterialTheme.colorScheme.onPrimary)
                     .clip(RectangleShape)
-                // backgrnd
+
             )
 
             Text(

@@ -120,10 +120,19 @@ fun SingleProfileScreen(
 
             Display(textName = "Family Name :", text = currentProfile.familyName)
             Display(textName = "Name :", text = currentProfile.name)
-            Display(textName = "Gender :", text = currentProfile.gender)
-            Display(textName = "DOB :", text = currentProfile.age)
             Display(textName = "Father's Name :", text = currentProfile.fathersName)
             Display(textName = "Mother's Name :", text = currentProfile.mothersName)
+            Display(textName = "Gender :", text = currentProfile.gender)
+            Display(textName = "Height :", text = currentProfile.height)
+            Display(textName = "DOB :", text = currentProfile.age)
+            Display(textName = "Time Of Birth :", text = currentProfile.timeOfBirth)
+            Display(textName = "Siblings :", text = currentProfile.siblings)
+            Display(textName = "Qualification :", text = currentProfile.education)
+            Display(textName = "Profession Details :", text = currentProfile.profession)
+            Display(textName = "Settled Place :", text = currentProfile.location)
+            Display(textName = "Native Place :", text = currentProfile.nativePlace)
+            Display(textName = "Property :", text = currentProfile.property)
+            Display(textName = "Marital Status :", text = currentProfile.maritalStatus)
             Display(textName = "Contact Number :", text = currentProfile.number)
             Display(textName = "Additional Information:", text = currentProfile.description)
             Display(textName = "Looking For :", text = currentProfile.requirement)
@@ -134,7 +143,7 @@ fun SingleProfileScreen(
                 contentPadding = PaddingValues(12.dp),
                 modifier = Modifier.padding(bottom = 12.dp, top = 6.dp)
             ) {
-                Text(text = "Anonymous Chat", fontSize = 20.sp)
+                Text(text = "Message", fontSize = 20.sp)
             }
             if (show.value){
                 Dialog( profileId,navController = navController , viewModel = viewModel)
@@ -212,9 +221,7 @@ fun Dialog(
     navController: NavController,
     viewModel: KmViewModel
 ) {
-    val chatName = remember {
-        mutableStateOf("")
-    }
+
     val openDialog = remember { mutableStateOf(true) }
     if (openDialog.value) {
         AlertDialog(

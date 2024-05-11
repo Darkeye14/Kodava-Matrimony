@@ -151,7 +151,7 @@ fun SignUpScreen(navController: NavController ,
             )
             Button(
                 onClick = {
-                    viewModel.signUp(
+                    viewModel.signUp1(
                         nameState.value.text.trim(),
                         emailState.value.text.trim(),
                         passwordState.value.text.trim(),
