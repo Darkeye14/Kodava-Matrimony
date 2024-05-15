@@ -45,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -154,18 +155,16 @@ fun CreateProfileScreen(
             }
 
 
-
-
             val radioButtons = remember {
                 mutableStateListOf(
                     ToggleableInfo(
 
                         isChecked = false,
-                        text = "Boy"
+                        text = "Male"
                     ),
                     ToggleableInfo(
                         isChecked = false,
-                        text = "Girl"
+                        text = "Female"
                     )
                 )
             }
@@ -296,7 +295,7 @@ fun CreateProfileScreen(
                 ),
                 placeholder = {
                     Text(
-                        text = "Include Tamane",
+                        text = "Include Thamane",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -324,6 +323,7 @@ fun CreateProfileScreen(
                     )
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 )
             )
@@ -348,6 +348,7 @@ fun CreateProfileScreen(
                     )
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 )
             )
