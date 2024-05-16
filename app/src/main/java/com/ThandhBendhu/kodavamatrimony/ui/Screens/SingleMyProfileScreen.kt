@@ -3,7 +3,6 @@ package com.ThandhBendhu.kodavamatrimony.ui.Screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,12 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -34,10 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ThandhBendhu.kodavamatrimony.R
 import com.ThandhBendhu.kodavamatrimony.ui.KmViewModel
@@ -49,15 +40,13 @@ import com.ThandhBendhu.kodavamatrimony.ui.Utility.navigateTo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SingleProfileScreen(
+fun SingleMyProfileScreen(
     navController: NavController,
     viewModel: KmViewModel,
     profileId: String
 ) {
     val currentProfile = viewModel.profiles.value.first { it.userId == profileId }
-    val show = remember {
-        mutableStateOf(false)
-    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -91,9 +80,11 @@ fun SingleProfileScreen(
                     .padding(12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                BookmarkButton {
-                    viewModel.onBookmark(profileId)
-                navigateTo(navController,DestinationScreen.SavedScreen.route)
+                DeleteButton {
+                    navigateTo(
+                        navController,
+                        DestinationScreen.DeleteScreen.createRoute(id = profileId)
+                    )
                 }
             }
 
@@ -130,107 +121,16 @@ fun SingleProfileScreen(
             Display(textName = "Contact Number :", text = currentProfile.number)
             Display(textName = "Additional Information:", text = currentProfile.description)
             Display(textName = "Looking For :", text = currentProfile.requirement)
-            Button(
-                onClick = {
-                    show.value =true
-                },
-                contentPadding = PaddingValues(12.dp),
-                modifier = Modifier.padding(bottom = 12.dp, top = 6.dp)
-            ) {
-                Text(text = "Message", fontSize = 20.sp)
-            }
-            if (show.value){
-                Dialog( profileId,navController = navController , viewModel = viewModel)
-            }
+
         }
     }
 }
-
 @Composable
-fun Display(
-    textName: String,
-    text: String?
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(6.dp)
-        ) {
-            Text(
-                text = textName,
-                modifier = Modifier
-                    .padding(12.dp),
-                fontSize = 24.sp,
-                fontFamily = FontFamily.SansSerif,
-                fontWeight = FontWeight.SemiBold,
-
-                )
-            Text(
-                text = if (text != null) {
-                    text
-                } else {
-                    "Not Specified"
-                },
-                modifier = Modifier
-                    .padding(16.dp),
-                fontFamily = FontFamily.Monospace,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Normal,
-                minLines = 1
-
-            )
-        }
-    }
-}
-
-@Composable
-fun BookmarkButton(onClick: () -> Unit) {
+fun DeleteButton(onClick: () -> Unit) {
     ExtendedFloatingActionButton(
         onClick = { onClick() },
-        icon = { Icon(Icons.Default.AddCircle, "Extended floating action button.") },
-        text = { Text(text = "Bookmark") },
+        icon = { Icon(Icons.Default.Delete, "Extended floating action button.") },
+        text = { Text(text = "Delete") },
         containerColor = MaterialTheme.colorScheme.primary
     )
-}
-
-
-@Composable
-fun Dialog(
-    profileId : String,
-    navController: NavController,
-    viewModel: KmViewModel
-) {
-
-    val openDialog = remember { mutableStateOf(true) }
-    if (openDialog.value) {
-        AlertDialog(
-            onDismissRequest = {
-                openDialog.value = false
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        openDialog.value = false
-          //viewmodel
-                        viewModel.onAddChat( profileId )
-                        navigateTo(navController,DestinationScreen.ChatListScreen.route)
-
-                    }) {
-                    Text(text = "OK")
-                }
-            },
-            title = {
-                Text(text = "Direct Message", fontWeight = FontWeight.Bold)
-            },
-            text = {
-                Text(text = "Illegal or irrational use of others info will lead to permanent suspension and may lead to legal issues ")
-            },
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-    }
 }

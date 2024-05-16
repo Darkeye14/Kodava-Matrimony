@@ -83,7 +83,7 @@ fun SearchScreen(
                         .height(130.dp)
                         .fillMaxWidth()
                         .padding(8.dp),
-                    colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
+                    colors = CardDefaults.cardColors(MaterialTheme.colorScheme.error)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize(),
@@ -120,7 +120,7 @@ fun SearchScreen(
                             .height(130.dp)
                             .fillMaxWidth()
                             .padding(8.dp),
-                        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
+                        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.error)
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),

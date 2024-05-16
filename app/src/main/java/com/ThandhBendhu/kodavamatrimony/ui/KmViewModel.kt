@@ -22,6 +22,7 @@ import com.ThandhBendhu.kodavamatrimony.ui.Utility.navigateTo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
@@ -201,7 +202,7 @@ class KmViewModel @Inject constructor(
         password: String,
         navController: NavController
 
-    ) = CoroutineScope(Dispatchers.IO).launch{
+    ) = CoroutineScope(Dispatchers.IO).launch {
         if (email.isEmpty() || password.isEmpty()) {
             handleException(customMessage = "Please fill all the fields")
 
@@ -209,7 +210,7 @@ class KmViewModel @Inject constructor(
             inProgress.value = true
             auth.signInWithEmailAndPassword(email, password)
                 .addOnFailureListener {
-                    handleException( customMessage = "Login failed")
+                    handleException(customMessage = "Login failed")
                 }
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
@@ -227,12 +228,13 @@ class KmViewModel @Inject constructor(
                 .await()
         }
     }
-private fun afterLogin(
-    navController: NavController
-)= CoroutineScope(Dispatchers.Main).launch{
-    delay(500)
-    navigateTo(navController,DestinationScreen.HomeScreen.route)
-}
+
+    private fun afterLogin(
+        navController: NavController
+    ) = CoroutineScope(Dispatchers.Main).launch {
+        delay(500)
+        navigateTo(navController, DestinationScreen.HomeScreen.route)
+    }
 
     fun logout() {
         signIn.value = false
@@ -241,6 +243,7 @@ private fun afterLogin(
         auth.signOut()
         currentChatMessageListener = null
     }
+
     fun signUp1(
         name: String,
         email: String,
@@ -312,7 +315,7 @@ private fun afterLogin(
         maritalStatus: String? = null,
         profession: String? = null,
 
-    ) {
+        ) {
         val uid = UUID.randomUUID().toString()
         val userData = UserData(
             userId = uid,
@@ -511,12 +514,13 @@ private fun afterLogin(
                     myBookmarks.value = value.documents.mapNotNull {
                         it.toObject<UserData>()
                     }
-
-                    val bmk = Bookmark(
-                        auth.currentUser?.uid,
-                        myBookmarks.value[0]
-                    )
-                    db.collection(BOOKMARK).document().set(bmk)
+                    if (myBookmarks.value.isNotEmpty()) {
+                        val bmk = Bookmark(
+                            auth.currentUser?.uid,
+                            myBookmarks.value[0]
+                        )
+                        db.collection(BOOKMARK).document().set(bmk)
+                    }
                 }
             }
         inProgress.value = false
@@ -526,19 +530,47 @@ private fun afterLogin(
         profileId: String
     ) = CoroutineScope(Dispatchers.IO).launch {
         inProgress.value = true
+
+        val bmkToBeDeleted = db.collection(BOOKMARK)
+            .whereEqualTo(
+                "data.userId", profileId
+            )
+            .get()
+            .await()
+
+        if (bmkToBeDeleted.documents.isNotEmpty()) {
+            for (document in bmkToBeDeleted) {
+                try {
+                    document.reference.delete().await()
+                } catch (e: FirebaseFirestoreException) {
+                    handleException(e)
+                } catch (e: Exception) {
+                    handleException(e)
+                }
+            }
+        }
+
         db.collection(USER_NODE).where(
             Filter.and(
-
                 Filter.equalTo("authId", auth.currentUser?.uid),
                 Filter.equalTo("userId", profileId)
             )
+
         ).get()
+            .addOnFailureListener {
+                handleException(it)
+            }
             .addOnSuccessListener { value ->
                 value.documents.mapNotNull {
-                    it.reference.delete()
+                    try {
+                        it.reference.delete()
+                    } catch (e: FirebaseFirestoreException) {
+                        handleException(e)
+                    } catch (e: Exception) {
+                        handleException(e)
+                    }
                 }
             }
-            .await()
         inProgress.value = false
     }
 
