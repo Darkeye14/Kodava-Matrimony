@@ -1,5 +1,6 @@
 package com.ThandhBendhu.kodavamatrimony.ui.Screens
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -56,6 +57,7 @@ import com.ThandhBendhu.kodavamatrimony.ui.KmViewModel
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.BottomNavigationItem
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.BottomNavigationMenu
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.DestinationScreen
+import com.ThandhBendhu.kodavamatrimony.ui.Utility.CommonImage
 import com.ThandhBendhu.kodavamatrimony.ui.Utility.CommonProgressBar
 import com.ThandhBendhu.kodavamatrimony.ui.Utility.navigateTo
 
@@ -97,7 +99,9 @@ fun CreateProfileScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val imageUrl = viewModel.userData.value?.imageUrl
+            val imageUrl = remember {
+                mutableStateOf("")
+            }
 
             val nameState = remember {
                 mutableStateOf(TextFieldValue())
@@ -188,8 +192,7 @@ fun CreateProfileScreen(
             )
             //Add profile pic
 
-            ProfileImage(imageUrl = imageUrl, viewModel = viewModel)
-
+            imageUrl.value = ProfileImage(viewModel = viewModel)
             Spacer(modifier = Modifier.padding(12.dp))
 
             radioButtons.forEachIndexed { index, info ->
@@ -566,7 +569,7 @@ fun CreateProfileScreen(
             //Called here
             Button(
                 onClick = {
-                    viewModel.createOrUpdateProfile(
+                    viewModel.createProfile(
                         name = nameState.value.text,
                         familyName = familyNameState.value.text,
                         number = numberState.value.text,
@@ -584,7 +587,8 @@ fun CreateProfileScreen(
                         maritalStatus = maritalState.value.text,
                         height = heightState.value.text,
                         native = nativeState.value.text,
-                        profession = professionState.value.text
+                        profession = professionState.value.text,
+                        imageUrl = imageUrl.value
                     )
                     navigateTo(navController, DestinationScreen.HomeScreen.route)
                     viewModel.onAddedProfile(nameState.value.text)
@@ -603,17 +607,20 @@ fun CreateProfileScreen(
 
 @Composable
 fun ProfileImage(
-    imageUrl: String?,
     viewModel: KmViewModel
-) {
+) :String{
     val show = remember {
         mutableStateOf(false)
+    }
+    val uriState  = remember {
+        mutableStateOf("")
     }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let {
-            viewModel.uploadProfileImage(uri)
+            viewModel.uploadImage(uri)
+             uriState.value = uri.toString()
         }
     }
 
@@ -626,8 +633,8 @@ fun ProfileImage(
                 .padding(8.dp)
                 .fillMaxWidth()
                 .clickable {
-                    //               launcher.launch("image/*")
-                    //    show.value = true
+                    launcher.launch("image/*")
+                    //     show.value = true
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -639,8 +646,8 @@ fun ProfileImage(
                 colors = CardDefaults.cardColors(Color.Gray)
 
             ) {
-                // for image           CommonImage(data = imageUrl)
-                if (show.value == true) {
+                          CommonImage(data = uriState.value)
+                if (show.value) {
                     LauncherDialog()
                 }
 
@@ -651,6 +658,7 @@ fun ProfileImage(
             CommonProgressBar()
         }
     }
+    return uriState.value
 }
 
 

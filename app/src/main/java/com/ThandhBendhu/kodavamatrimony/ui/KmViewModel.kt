@@ -15,11 +15,12 @@ import com.ThandhBendhu.kodavamatrimony.data.ChatUser
 import com.ThandhBendhu.kodavamatrimony.data.MESSAGE
 import com.ThandhBendhu.kodavamatrimony.data.Message
 import com.ThandhBendhu.kodavamatrimony.data.SignUpEvent
-import com.ThandhBendhu.kodavamatrimony.data.USER_NODE
+import com.ThandhBendhu.kodavamatrimony.data.PROFILES
 import com.ThandhBendhu.kodavamatrimony.data.UserData
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Utility.navigateTo
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -103,7 +104,7 @@ class KmViewModel @Inject constructor(
             return
         } else {
 
-            db.collection(USER_NODE)
+            db.collection(PROFILES)
                 .whereEqualTo("userId", profileId)
                 .get()
                 .addOnSuccessListener {
@@ -208,24 +209,29 @@ class KmViewModel @Inject constructor(
 
         } else {
             inProgress.value = true
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnFailureListener {
-                    handleException(customMessage = "Login failed")
-                }
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        signIn.value = true
-                        inProgress.value = false
-                        auth.currentUser?.uid?.let {
-                            getUserData(it)
-                        }
-                        afterLogin(navController)
-                    } else {
-                        handleException(it.exception, customMessage = "Login failed")
+            try {
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnFailureListener {
+                        handleException(it)
                     }
+                    .addOnCompleteListener {
 
-                }
-                .await()
+                        if (it.isSuccessful) {
+                            signIn.value = true
+                            inProgress.value = false
+                            auth.currentUser?.uid?.let {
+                                getUserData(it)
+                            }
+                            afterLogin(navController)
+                        } else {
+                            handleException(it.exception, customMessage = "Login failed")
+                        }
+
+                    }
+            } catch (e: FirebaseAuthException) {
+                handleException(e)
+            }
+
         }
     }
 
@@ -294,7 +300,7 @@ class KmViewModel @Inject constructor(
 
     }
 
-    fun createOrUpdateProfile(
+    fun createProfile(
         name: String? = null,
         familyName: String? = null,
         number: String? = null,
@@ -314,8 +320,7 @@ class KmViewModel @Inject constructor(
         height: String? = null,
         maritalStatus: String? = null,
         profession: String? = null,
-
-        ) {
+    ) {
         val uid = UUID.randomUUID().toString()
         val userData = UserData(
             userId = uid,
@@ -338,18 +343,18 @@ class KmViewModel @Inject constructor(
             nativePlace = native ?: userData.value?.nativePlace,
             height = height ?: userData.value?.height,
             maritalStatus = maritalStatus ?: userData.value?.maritalStatus,
-            profession = profession ?: userData.value?.profession
+            profession = profession ?: userData.value?.profession,
         )
         uid.let {
             inProgress.value = true
-            db.collection(USER_NODE)
+            db.collection(PROFILES)
                 .document(uid)
                 .get()
                 .addOnSuccessListener {
                     if (it.exists()) {
                         //update
                     } else {
-                        db.collection(USER_NODE)
+                        db.collection(PROFILES)
                             .add(userData)
                         getUserData(uid)
                         getMyProfilesData()
@@ -366,7 +371,7 @@ class KmViewModel @Inject constructor(
 
     fun initSearch() {
         inProgressProfile.value = true
-        db.collection(USER_NODE)
+        db.collection(PROFILES)
             .get()
             .addOnSuccessListener {
                 if (it != null) {
@@ -382,7 +387,7 @@ class KmViewModel @Inject constructor(
 
     private fun getUserData(uid: String) {
         inProgress.value = true
-        db.collection(USER_NODE)
+        db.collection(PROFILES)
             .document(uid)
             .addSnapshotListener { value, error ->
                 if (error != null) {
@@ -404,7 +409,7 @@ class KmViewModel @Inject constructor(
 
         inProgress.value = true
         if (auth.currentUser?.uid != null) {
-            db.collection(USER_NODE)
+            db.collection(PROFILES)
                 .document(auth.currentUser?.uid!!)
                 .addSnapshotListener { value, error ->
                     if (error != null) {
@@ -437,17 +442,8 @@ class KmViewModel @Inject constructor(
         inProgress.value = false
     }
 
-    fun uploadProfileImage(
-        uri: Uri
-    ) {
-        uploadImage(uri) {
-            createOrUpdateProfile(imageUrl = it.toString())
-        }
-    }
-
     fun uploadImage(
         uri: Uri,
-        onSuccess: (Uri) -> Unit
     ) {
         inProgress.value = true
         val storageRef = storage.reference
@@ -459,19 +455,27 @@ class KmViewModel @Inject constructor(
             val result = it.metadata
                 ?.reference
                 ?.downloadUrl
-            result?.addOnSuccessListener(onSuccess)
             inProgress.value = false
         }
             .addOnFailureListener {
                 handleException(it)
             }
     }
+//    fun downloadImage(
+//        imageUrl: String?
+//    ) = CoroutineScope(Dispatchers.IO).launch{
+//        inProgress.value =true
+//        val storageRef = storage.reference
+//        storageRef.downloadUrl.addOnSuccessListener {
+//
+//        }
+//    }
 
     fun onAddedProfile(name: String) {
         if (name.isEmpty()) {
             handleException(customMessage = "Name Error")
         } else {
-            db.collection(USER_NODE)
+            db.collection(PROFILES)
                 .whereEqualTo("name", name)
                 .get()
                 .addOnSuccessListener {
@@ -490,7 +494,7 @@ class KmViewModel @Inject constructor(
 
     ) {
         inProgressProfile.value = true
-        db.collection(USER_NODE)
+        db.collection(PROFILES)
             .addSnapshotListener { value, error ->
                 if (value != null) {
                     profiles.value = value.documents.mapNotNull {
@@ -504,7 +508,7 @@ class KmViewModel @Inject constructor(
     fun onBookmark(
         bookmarkId: String
     ) {
-        db.collection(USER_NODE)
+        db.collection(PROFILES)
             .whereEqualTo("userId", bookmarkId)
             .addSnapshotListener { value, error ->
                 if (error != null) {
@@ -550,7 +554,7 @@ class KmViewModel @Inject constructor(
             }
         }
 
-        db.collection(USER_NODE).where(
+        db.collection(PROFILES).where(
             Filter.and(
                 Filter.equalTo("authId", auth.currentUser?.uid),
                 Filter.equalTo("userId", profileId)
@@ -594,7 +598,7 @@ class KmViewModel @Inject constructor(
 
     fun onCreateProfile() {
         inProgressProfile.value = true
-        db.collection(USER_NODE)
+        db.collection(PROFILES)
             .whereEqualTo("authId", auth.currentUser?.uid)
             .addSnapshotListener { value, error ->
                 if (error != null) {

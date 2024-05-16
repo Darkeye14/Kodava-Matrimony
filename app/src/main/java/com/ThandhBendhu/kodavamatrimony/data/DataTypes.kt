@@ -1,5 +1,7 @@
 package com.ThandhBendhu.kodavamatrimony.data
 
+import android.net.Uri
+
 data class UserData(
     var userId : String?= null,
     var authId : String?= null,
@@ -23,7 +25,7 @@ data class UserData(
     var maritalStatus : String?=null,
     var profession : String?=null,
 
-)
+    )
 data class Bookmark(
     val authenticationId: String? = null,
     val data: UserData? =null,
