@@ -16,9 +16,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -180,13 +186,14 @@ fun ProfileCard(
 fun ChatCard(
     name: String,
     onItemClick: () -> Unit,
+    onDeleteClick:()->Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentSize()
-            .height(90.dp)
+            .height(150.dp)
             .padding(12.dp)
             .clickable {
                 onItemClick.invoke()
@@ -196,7 +203,7 @@ fun ChatCard(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(10.dp)
+                .padding(12.dp)
                 .horizontalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center
@@ -207,6 +214,26 @@ fun ChatCard(
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 30.sp
             )
+            Row(
+                modifier
+                    .padding(6.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                DeleteChatButton { onDeleteClick.invoke() }
+            }
         }
     }
+}
+
+@Composable
+fun DeleteChatButton(
+    onClick :()->Unit
+) {
+    ExtendedFloatingActionButton(
+        onClick = { onClick.invoke()},
+        icon = { Icon(Icons.Default.Delete, "Extended floating action button.") },
+        text = { Text(text = "Delete") },
+        containerColor = MaterialTheme.colorScheme.errorContainer
+    )
 }

@@ -611,9 +611,7 @@ fun CreateProfileScreen(
 fun ProfileImage(
     viewModel: KmViewModel
 ) :String{
-    val show = remember {
-        mutableStateOf(false)
-    }
+
     val uriState  = remember {
         mutableStateOf("")
     }
@@ -635,7 +633,6 @@ fun ProfileImage(
                 .fillMaxWidth()
                 .clickable {
                     launcher.launch("image/*")
-                    //     show.value = true
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -653,9 +650,6 @@ fun ProfileImage(
                     modifier= Modifier.wrapContentSize(),
                     contentScale = ContentScale.Crop
                 )
-                if (show.value) {
-                    LauncherDialog()
-                }
             }
             Text(text = "Change Profile Picture")
         }
@@ -666,33 +660,3 @@ fun ProfileImage(
     return uriState.value
 }
 
-
-@Composable
-fun LauncherDialog() {
-    val openDialog = remember { mutableStateOf(true) }
-    if (openDialog.value) {
-        AlertDialog(
-            onDismissRequest = {
-                openDialog.value = false
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        openDialog.value = false
-                    }) {
-                    Text(text = "OK")
-                }
-            },
-            title = {
-                Text(text = "Feature not Available yet", fontWeight = FontWeight.Bold)
-            },
-            text = {
-                Text(
-                    text = "This Feature will be available in future updates. We apologise for the inconvenience",
-                    fontWeight = FontWeight.SemiBold
-                )
-            },
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-    }
-}

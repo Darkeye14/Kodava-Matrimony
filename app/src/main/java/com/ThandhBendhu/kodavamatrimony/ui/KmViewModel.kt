@@ -99,11 +99,11 @@ class KmViewModel @Inject constructor(
         currentChatMessageListener = null
     }
 
-    fun onAddChat(profileId: String) {
+    fun onAddChat(profileId: String) = CoroutineScope(Dispatchers.IO).launch {
 
         if (profileId.isEmpty()) {
             handleException(customMessage = "invalid profile")
-            return
+            return@launch
         } else {
 
             db.collection(PROFILES)
@@ -160,6 +160,7 @@ class KmViewModel @Inject constructor(
 
 
         }
+
     }
 
     fun populateChat(
@@ -376,7 +377,7 @@ class KmViewModel @Inject constructor(
                         .putFile(it1.toUri())
                 }
                 uploadTask.addOnSuccessListener {
-                    val result = it.metadata
+                    it.metadata
                         ?.reference
                         ?.downloadUrl
                     inProgress.value = false
@@ -389,7 +390,7 @@ class KmViewModel @Inject constructor(
     }
 
     fun downloadSingleProfileImage(
-        filename : String?
+        filename: String?
     ) = CoroutineScope(Dispatchers.IO).launch {
         inProgress.value = true
         try {
@@ -398,9 +399,9 @@ class KmViewModel @Inject constructor(
             val bytes = storageRef.child("images/$filename")
                 .getBytes(maxDownloadSize)
                 .await()
-             singleProfileBmp.value = BitmapFactory.decodeByteArray(bytes,0,bytes.size)
+            singleProfileBmp.value = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
 
-        }catch (e : Exception){
+        } catch (e: Exception) {
             handleException(e)
         }
         inProgress.value = false
@@ -515,26 +516,34 @@ class KmViewModel @Inject constructor(
 
     fun onBookmark(
         bookmarkId: String
-    ) {
-        db.collection(PROFILES)
-            .whereEqualTo("userId", bookmarkId)
-            .addSnapshotListener { value, error ->
-                if (error != null) {
-                    handleException(error, "cannot retrieve user")
-                }
-                if (value != null) {
-                    myBookmarks.value = value.documents.mapNotNull {
-                        it.toObject<UserData>()
+    ) = CoroutineScope(Dispatchers.IO).launch {
+        val alreadyBmk = db.collection(BOOKMARK).where(
+            Filter.and(
+                Filter.equalTo("authenticationId", auth.currentUser?.uid),
+                Filter.equalTo("data.userId", bookmarkId)
+            )
+        ).get().await()
+        if (alreadyBmk.isEmpty) {
+            db.collection(PROFILES)
+                .whereEqualTo("userId", bookmarkId)
+                .addSnapshotListener { value, error ->
+                    if (error != null) {
+                        handleException(error, "cannot retrieve user")
                     }
-                    if (myBookmarks.value.isNotEmpty()) {
-                        val bmk = Bookmark(
-                            auth.currentUser?.uid,
-                            myBookmarks.value[0]
-                        )
-                        db.collection(BOOKMARK).document().set(bmk)
+                    if (value != null) {
+                        myBookmarks.value = value.documents.mapNotNull {
+                            it.toObject<UserData>()
+                        }
+                        if (myBookmarks.value.isNotEmpty()) {
+                            val bmk = Bookmark(
+                                auth.currentUser?.uid,
+                                myBookmarks.value[0]
+                            )
+                            db.collection(BOOKMARK).document().set(bmk)
+                        }
                     }
                 }
-            }
+        }
         inProgress.value = false
     }
 
@@ -583,6 +592,42 @@ class KmViewModel @Inject constructor(
                     }
                 }
             }
+        inProgress.value = false
+    }
+
+    fun onDeleteChat(
+        chatId: String
+    ) = CoroutineScope(Dispatchers.IO).launch {
+        inProgress.value = true
+
+        db.collection(CHATS).whereEqualTo("chatId", chatId).get()
+
+            .addOnFailureListener {
+                handleException(it)
+            }
+            .addOnSuccessListener { value ->
+
+                if (!value.isEmpty) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val messages =
+                            db.collection(CHATS).document(chatId).collection(MESSAGE).get()
+                                .await()
+                        for (doc in messages.documents) {
+                            doc.reference.delete()
+                        }
+                    }
+                }
+                value.documents.mapNotNull {
+                    try {
+                        it.reference.delete()
+                    } catch (e: FirebaseFirestoreException) {
+                        handleException(e)
+                    } catch (e: Exception) {
+                        handleException(e)
+                    }
+                }
+            }
+
         inProgress.value = false
     }
 
