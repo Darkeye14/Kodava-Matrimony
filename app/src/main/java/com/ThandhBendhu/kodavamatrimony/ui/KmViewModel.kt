@@ -126,12 +126,14 @@ class KmViewModel @Inject constructor(
                                     Filter.or(
                                         Filter.and(
                                             Filter.equalTo("user1.accId", auth.currentUser?.uid),
-                                            Filter.equalTo("user2.accId", chatPartnerAuth)
+                                            Filter.equalTo("user2.accId", chatPartnerAuth),
+                                            Filter.equalTo("user2.name", chatPartnerName)
                                         ),
                                         //chat already exists anta
                                         Filter.and(
                                             Filter.equalTo("user1.accId", chatPartnerAuth),
-                                            Filter.equalTo("user2.accId", auth.currentUser?.uid)
+                                            Filter.equalTo("user2.accId", auth.currentUser?.uid),
+                                            Filter.equalTo("user1.name", chatPartnerName)
                                         )
                                     )
                                 ).get()

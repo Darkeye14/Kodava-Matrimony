@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -193,7 +194,7 @@ fun ChatCard(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentSize()
-            .height(150.dp)
+            .height(155.dp)
             .padding(12.dp)
             .clickable {
                 onItemClick.invoke()
@@ -209,8 +210,9 @@ fun ChatCard(
             verticalArrangement = Arrangement.Center
 
         ) {
-            Text(
+            Text( textAlign = TextAlign.Start,
                 text = name,
+                modifier= Modifier.padding(4.dp),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 30.sp
             )
@@ -218,7 +220,7 @@ fun ChatCard(
                 modifier
                     .padding(6.dp)
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.Start,
             ) {
                 DeleteChatButton { onDeleteClick.invoke() }
             }
