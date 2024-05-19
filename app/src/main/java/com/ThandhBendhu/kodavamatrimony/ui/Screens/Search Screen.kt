@@ -140,7 +140,6 @@ fun SearchScreen(
                     }
                 }
                 items(profiles) { profile ->
-
                     ProfileCard(
                         profile = profile,
                         onItemClick = {

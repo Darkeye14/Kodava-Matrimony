@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,8 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +45,7 @@ fun SingleMyProfileScreen(
     profileId: String
 ) {
     val currentProfile = viewModel.profiles.value.first { it.userId == profileId }
+    viewModel.downloadSingleProfileImage(profileId)
 
     Scaffold(
         topBar = {
@@ -86,6 +86,7 @@ fun SingleMyProfileScreen(
                         DestinationScreen.DeleteScreen.createRoute(id = profileId)
                     )
                 }
+
             }
 
             Row(
@@ -94,7 +95,7 @@ fun SingleMyProfileScreen(
             ) {
 
                 CommonImage(
-                    data = currentProfile.imageUrl,
+                    data = viewModel.singleProfileBmp.value,
                     modifier = Modifier
                         .padding(12.dp)
                         .size(200.dp)

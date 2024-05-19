@@ -1,6 +1,6 @@
 package com.ThandhBendhu.kodavamatrimony.ui.Utility
 
-import android.net.Uri
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -26,13 +29,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import com.ThandhBendhu.kodavamatrimony.R
 import com.ThandhBendhu.kodavamatrimony.data.UserData
 import com.ThandhBendhu.kodavamatrimony.ui.KmViewModel
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.DestinationScreen
@@ -89,15 +95,15 @@ fun CheckSignedIn(
 
 @Composable
 fun CommonImage(
-    data: String?,
+    data: Bitmap?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop
 ) {
-    val painter = rememberAsyncImagePainter(model = data)
-    Image(
-        painter = painter,
+
+    AsyncImage(
+        model = data,
         contentDescription = null,
-        modifier,
+        modifier.wrapContentSize(),
         contentScale = contentScale
     )
 }
@@ -122,15 +128,22 @@ fun ProfileCard(
             modifier = modifier
                 .fillMaxSize()
         ) {
-            CommonImage(
-                data = profile.imageUrl,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(162.dp)
-                    .padding(12.dp)
-                    .background(MaterialTheme.colorScheme.onPrimary)
-                    .clip(RectangleShape)
 
+            val resId = if (profile.gender.equals("Female",true)) {
+                R.drawable.girl
+            } else{
+                R.drawable.boy
+            }
+            Image(
+                painter = painterResource(id = resId),
+                contentDescription = null,
+                modifier = Modifier
+                    .background(Color.LightGray)
+                    .fillMaxWidth()
+                    .size(175.dp)
+                    .padding(12.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Inside
             )
 
             Text(
@@ -165,13 +178,14 @@ fun ProfileCard(
 
 @Composable
 fun ChatCard(
-    name : String,
+    name: String,
     onItemClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .wrapContentSize()
             .height(90.dp)
             .padding(12.dp)
             .clickable {
@@ -179,7 +193,7 @@ fun ChatCard(
             },
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
     ) {
-        Column (
+        Column(
             modifier = modifier
                 .fillMaxSize()
                 .padding(10.dp)
@@ -187,7 +201,7 @@ fun ChatCard(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center
 
-        ){
+        ) {
             Text(
                 text = name,
                 fontWeight = FontWeight.SemiBold,

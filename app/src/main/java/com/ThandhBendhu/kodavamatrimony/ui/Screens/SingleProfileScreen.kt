@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -58,6 +57,7 @@ fun SingleProfileScreen(
     val show = remember {
         mutableStateOf(false)
     }
+    viewModel.downloadSingleProfileImage(profileId)
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -103,7 +103,7 @@ fun SingleProfileScreen(
             ) {
 
                 CommonImage(
-                    data = currentProfile.imageUrl,
+                    data = viewModel.singleProfileBmp.value,
                     modifier = Modifier
                         .padding(12.dp)
                         .size(200.dp)

@@ -1,8 +1,10 @@
 package com.ThandhBendhu.kodavamatrimony.ui
 
-import android.net.Uri
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.ThandhBendhu.kodavamatrimony.data.ACCOUNTS
@@ -45,7 +47,7 @@ class KmViewModel @Inject constructor(
     private var db: FirebaseFirestore,
     private val storage: FirebaseStorage
 ) : ViewModel() {
-
+    var singleProfileBmp = mutableStateOf<Bitmap?>(null)
     var inProgress = mutableStateOf(false)
     var inProgressChat = mutableStateOf(false)
     var inProgressProfile = mutableStateOf(false)
@@ -322,6 +324,7 @@ class KmViewModel @Inject constructor(
         profession: String? = null,
     ) {
         val uid = UUID.randomUUID().toString()
+
         val userData = UserData(
             userId = uid,
             authId = auth.currentUser?.uid,
@@ -365,8 +368,42 @@ class KmViewModel @Inject constructor(
                 .addOnFailureListener {
                     handleException(it, "Cannot Retrieve User")
                 }
+            if (imageUrl != null && imageUrl != "") {
+                val storageRef = storage.reference
+                val imageRef = storageRef.child("images/$uid")
+                val uploadTask = imageUrl.let { it1 ->
+                    imageRef
+                        .putFile(it1.toUri())
+                }
+                uploadTask.addOnSuccessListener {
+                    val result = it.metadata
+                        ?.reference
+                        ?.downloadUrl
+                    inProgress.value = false
+                }
+                    .addOnFailureListener {
+                        handleException(it)
+                    }
+            }
         }
+    }
 
+    fun downloadSingleProfileImage(
+        filename : String?
+    ) = CoroutineScope(Dispatchers.IO).launch {
+        inProgress.value = true
+        try {
+            val maxDownloadSize = 5L * 1024 * 1024
+            val storageRef = FirebaseStorage.getInstance().reference
+            val bytes = storageRef.child("images/$filename")
+                .getBytes(maxDownloadSize)
+                .await()
+             singleProfileBmp.value = BitmapFactory.decodeByteArray(bytes,0,bytes.size)
+
+        }catch (e : Exception){
+            handleException(e)
+        }
+        inProgress.value = false
     }
 
     fun initSearch() {
@@ -442,34 +479,6 @@ class KmViewModel @Inject constructor(
         inProgress.value = false
     }
 
-    fun uploadImage(
-        uri: Uri,
-    ) {
-        inProgress.value = true
-        val storageRef = storage.reference
-        val uuid = UUID.randomUUID()
-        val imageRef = storageRef.child("images/$uuid")
-        val uploadTask = imageRef
-            .putFile(uri)
-        uploadTask.addOnSuccessListener {
-            val result = it.metadata
-                ?.reference
-                ?.downloadUrl
-            inProgress.value = false
-        }
-            .addOnFailureListener {
-                handleException(it)
-            }
-    }
-//    fun downloadImage(
-//        imageUrl: String?
-//    ) = CoroutineScope(Dispatchers.IO).launch{
-//        inProgress.value =true
-//        val storageRef = storage.reference
-//        storageRef.downloadUrl.addOnSuccessListener {
-//
-//        }
-//    }
 
     fun onAddedProfile(name: String) {
         if (name.isEmpty()) {
@@ -481,7 +490,6 @@ class KmViewModel @Inject constructor(
                 .addOnSuccessListener {
                     if (it.isEmpty) {
                         handleException(customMessage = "profile not found")
-
                     }
                 }
                 .addOnFailureListener {
