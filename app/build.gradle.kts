@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.kodavamatrimony"
+    namespace = "com.ThandhBendhu.kodavamatrimony"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.kodavamatrimony"
+        applicationId = "com.ThandhBendhu.kodavamatrimony"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -74,24 +74,24 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     // ViewModel Compose
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
     //Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.51")
+    implementation("com.google.dagger:hilt-android:2.51.1")
 
     implementation ("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     implementation("androidx.core:core-splashscreen:1.0.1")
 
-    ksp ("com.google.dagger:hilt-compiler:2.51")
+    ksp ("com.google.dagger:hilt-compiler:2.51.1")
 
     // For instrumentation tests
     androidTestImplementation  ("com.google.dagger:hilt-android-testing:2.51")
     kspAndroidTest ("com.google.dagger:hilt-compiler:2.51")
 
     // For local unit tests
-    testImplementation ("com.google.dagger:hilt-android-testing:2.51")
-    kspTest ("com.google.dagger:hilt-compiler:2.51")
+    testImplementation ("com.google.dagger:hilt-android-testing:2.51.1")
+    kspTest ("com.google.dagger:hilt-compiler:2.51.1")
 
     //coil
     implementation("io.coil-kt:coil-compose:2.6.0")
