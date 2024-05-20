@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -21,6 +23,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -68,6 +72,9 @@ fun ChatListScreen(
         if (viewModel.inProgressProfile.value) {
             CommonProgressBar()
         }
+        val showMessage = remember {
+            mutableStateOf(false)
+        }
         val profiles = viewModel.profiles.value
         if (profiles.isEmpty()) {
 
@@ -84,7 +91,7 @@ fun ChatListScreen(
                         .height(130.dp)
                         .fillMaxWidth()
                         .padding(8.dp),
-                    colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
+                    colors = CardDefaults.cardColors(MaterialTheme.colorScheme.error)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize(),
@@ -122,7 +129,7 @@ fun ChatListScreen(
                             .height(130.dp)
                             .fillMaxWidth()
                             .padding(8.dp),
-                        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
+                        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.error)
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -151,6 +158,9 @@ fun ChatListScreen(
                     chat.chatId?.let {
                         ChatCard(
                             name = chatUser.name,
+                            onDeleteClick ={
+                                           showMessage.value =true
+                            },
                             onItemClick = {
                                 navigateTo(
                                     navController,
@@ -158,9 +168,46 @@ fun ChatListScreen(
                                 )
                             }
                         )
+                        if (showMessage.value){
+                            DeleteChatDialog(viewModel = viewModel, chatId = it)
+                        }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun DeleteChatDialog(
+    viewModel: KmViewModel,
+    chatId :String
+) {
+    val openDialog = remember { mutableStateOf(true) }
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.onDeleteChat(chatId)
+                        openDialog.value = false
+                    }) {
+                    Text(text = "OK")
+                }
+            },
+            title = {
+                Text(text = "Delete", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text(
+                    text = "Confirm that you want to delete this chat by clicking on Ok!",
+                    fontWeight = FontWeight.SemiBold
+                )
+            },
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     }
 }

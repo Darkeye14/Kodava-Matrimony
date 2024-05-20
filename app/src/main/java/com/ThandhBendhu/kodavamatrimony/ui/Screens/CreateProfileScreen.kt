@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -40,21 +41,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.ThandhBendhu.kodavamatrimony.R
 import com.ThandhBendhu.kodavamatrimony.data.ToggleableInfo
 import com.ThandhBendhu.kodavamatrimony.ui.KmViewModel
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.BottomNavigationItem
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.BottomNavigationMenu
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.DestinationScreen
+import com.ThandhBendhu.kodavamatrimony.ui.Utility.CommonImage
 import com.ThandhBendhu.kodavamatrimony.ui.Utility.CommonProgressBar
 import com.ThandhBendhu.kodavamatrimony.ui.Utility.navigateTo
 
@@ -96,7 +101,9 @@ fun CreateProfileScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val imageUrl = viewModel.userData.value?.imageUrl
+            val imageUrl = remember {
+                mutableStateOf("")
+            }
 
             val nameState = remember {
                 mutableStateOf(TextFieldValue())
@@ -154,18 +161,16 @@ fun CreateProfileScreen(
             }
 
 
-
-
             val radioButtons = remember {
                 mutableStateListOf(
                     ToggleableInfo(
 
-                        isChecked = false,
-                        text = "Boy"
+                        isChecked = true,
+                        text = "Male"
                     ),
                     ToggleableInfo(
                         isChecked = false,
-                        text = "Girl"
+                        text = "Female"
                     )
                 )
             }
@@ -189,8 +194,7 @@ fun CreateProfileScreen(
             )
             //Add profile pic
 
-            ProfileImage(imageUrl = imageUrl, viewModel = viewModel)
-
+            imageUrl.value = ProfileImage(viewModel = viewModel)
             Spacer(modifier = Modifier.padding(12.dp))
 
             radioButtons.forEachIndexed { index, info ->
@@ -296,7 +300,7 @@ fun CreateProfileScreen(
                 ),
                 placeholder = {
                     Text(
-                        text = "Include Tamane",
+                        text = "Include Thamane",
                         modifier = Modifier
                             .padding(8.dp)
                     )
@@ -324,6 +328,7 @@ fun CreateProfileScreen(
                     )
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 )
             )
@@ -348,6 +353,7 @@ fun CreateProfileScreen(
                     )
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 )
             )
@@ -565,7 +571,7 @@ fun CreateProfileScreen(
             //Called here
             Button(
                 onClick = {
-                    viewModel.createOrUpdateProfile(
+                    viewModel.createProfile(
                         name = nameState.value.text,
                         familyName = familyNameState.value.text,
                         number = numberState.value.text,
@@ -583,7 +589,8 @@ fun CreateProfileScreen(
                         maritalStatus = maritalState.value.text,
                         height = heightState.value.text,
                         native = nativeState.value.text,
-                        profession = professionState.value.text
+                        profession = professionState.value.text,
+                        imageUrl = imageUrl.value
                     )
                     navigateTo(navController, DestinationScreen.HomeScreen.route)
                     viewModel.onAddedProfile(nameState.value.text)
@@ -602,17 +609,17 @@ fun CreateProfileScreen(
 
 @Composable
 fun ProfileImage(
-    imageUrl: String?,
     viewModel: KmViewModel
-) {
-    val show = remember {
-        mutableStateOf(false)
+) :String{
+
+    val uriState  = remember {
+        mutableStateOf("")
     }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let {
-            viewModel.uploadProfileImage(uri)
+             uriState.value = uri.toString()
         }
     }
 
@@ -625,8 +632,7 @@ fun ProfileImage(
                 .padding(8.dp)
                 .fillMaxWidth()
                 .clickable {
-                    //               launcher.launch("image/*")
-                    //    show.value = true
+                    launcher.launch("image/*")
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -638,11 +644,12 @@ fun ProfileImage(
                 colors = CardDefaults.cardColors(Color.Gray)
 
             ) {
-                // for image           CommonImage(data = imageUrl)
-                if (show.value == true) {
-                    LauncherDialog()
-                }
-
+                AsyncImage(
+                    model = uriState.value,
+                    contentDescription =null ,
+                    modifier= Modifier.wrapContentSize(),
+                    contentScale = ContentScale.Crop
+                )
             }
             Text(text = "Change Profile Picture")
         }
@@ -650,35 +657,6 @@ fun ProfileImage(
             CommonProgressBar()
         }
     }
+    return uriState.value
 }
 
-
-@Composable
-fun LauncherDialog() {
-    val openDialog = remember { mutableStateOf(true) }
-    if (openDialog.value) {
-        AlertDialog(
-            onDismissRequest = {
-                openDialog.value = false
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        openDialog.value = false
-                    }) {
-                    Text(text = "OK")
-                }
-            },
-            title = {
-                Text(text = "Feature not Available yet", fontWeight = FontWeight.Bold)
-            },
-            text = {
-                Text(
-                    text = "This Feature will be available in future updates. We apologise for the inconvenience",
-                    fontWeight = FontWeight.SemiBold
-                )
-            },
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-    }
-}

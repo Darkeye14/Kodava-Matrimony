@@ -44,105 +44,109 @@ fun HomeScreen(
     navController: NavController,
     viewModel: KmViewModel,
 
-){
+    ) {
 
-        Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = {
-                            Text(text = stringResource(id = R.string.app_name))
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(text = stringResource(id = R.string.app_name))
                 },
-                    colors = topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimary
-                    )
+                colors = topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
-            },
-            bottomBar = {
-                BottomNavigationMenu(
-                    selectedItem = BottomNavigationItem.HOMELIST,
-                    navController = navController
-                )
-            },
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            )
+        },
+        bottomBar = {
+            BottomNavigationMenu(
+                selectedItem = BottomNavigationItem.HOMELIST,
+                navController = navController
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.primaryContainer
+    ) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+                .verticalScroll(rememberScrollState())
+                .background(MaterialTheme.colorScheme.primaryContainer),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Button(onClick = {
+                    viewModel.logout()
+                    navigateTo(navController, DestinationScreen.Login.route)
+                }) {
+                    Text(text = "Log Out")
+                }
+            }
+            Card(
+                modifier = Modifier
+                    .height(130.dp)
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.error)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        textAlign = TextAlign.Center,
+                        text = "KODAVA SAMAJA(R) MYSURU",
+                        maxLines = 2,
+                        fontSize = 25.sp,
+                        fontFamily = FontFamily.SansSerif,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
+            }
+            Row(modifier = Modifier.padding(8.dp)) {
+                HomeScreenCard(Modifier.weight(1f), text = "Your Profiles") {
+                    viewModel.getMyProfilesData()
+                    navigateTo(navController, DestinationScreen.MyProfilesScreen.route)
+                }
+                HomeScreenCard(Modifier.weight(1f), text = "Saved Profiles") {
 
-           Column(
-               modifier = Modifier
-                   .fillMaxSize()
-                   .padding(it)
-                   .verticalScroll(rememberScrollState())
-                   .background(MaterialTheme.colorScheme.primaryContainer),
-               verticalArrangement = Arrangement.Center,
-               horizontalAlignment = Alignment.CenterHorizontally
-           ) {
-               
-               
-               
-               Row(
-                   modifier = Modifier.padding(8.dp),
-                   horizontalArrangement = Arrangement.End,
-                   verticalAlignment = Alignment.Top
-               ){
-                   Button(onClick = {
-                       viewModel.logout()
-                       navigateTo(navController,DestinationScreen.Login.route)
-                   }) {
-                       Text(text = "Log Out")
-                   }
-               }
-               Card(modifier = Modifier
-                   .height(130.dp)
-                   .fillMaxWidth()
-                   .padding(8.dp),
-                   colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)) {
-                   Row(modifier = Modifier.fillMaxSize(),
-                       horizontalArrangement = Arrangement.Center,
-                       verticalAlignment = Alignment.CenterVertically
-                   ) {
-                       Text(
-                           modifier = Modifier.padding(8.dp),
-                           textAlign = TextAlign.Center,
-                           text = "KODAVA SAMAJA(R) MYSURU",
-                           maxLines = 2,
-                           fontSize =25.sp,
-                           fontFamily = FontFamily.SansSerif,
-                           fontWeight = FontWeight.SemiBold,
-                       )
-                   }
-               }
-               Row(modifier = Modifier.padding(8.dp)) {
-                   HomeScreenCard(Modifier.weight(1f),text = "Your Profiles") {
-                       viewModel.getMyProfilesData()
-                       navigateTo(navController,DestinationScreen.MyProfilesScreen.route)
-                   }
-                   HomeScreenCard(Modifier.weight(1f),text = "Saved Profiles") {
+                    navigateTo(navController, DestinationScreen.SavedScreen.route)
+                }
+            }
+            Row(
+                modifier = Modifier.padding(8.dp)
+            ) {
+                HomeScreenCard(Modifier.weight(1f), text = "View Profiles") {
 
-                       navigateTo(navController,DestinationScreen.SavedScreen.route)
-                   }
-               }
-               Row(
-                   modifier = Modifier.padding(8.dp)
-               ) {
-                   HomeScreenCard(Modifier.weight(1f),text = "View Profiles") {
+                    navigateTo(navController, DestinationScreen.SearchScreen.route)
+                }
+                HomeScreenCard(Modifier.weight(1f), text = "Direct Messages") {
 
-                       navigateTo(navController,DestinationScreen.SearchScreen.route)
-                   }
-                   HomeScreenCard(Modifier.weight(1f),text = "Direct Messages") {
+                    navigateTo(navController, DestinationScreen.ChatListScreen.route)
+                }
+            }
 
-                       navigateTo(navController,DestinationScreen.ChatListScreen.route)
-                   }
-               }
-           }
         }
+    }
 
 }
 
 @Composable
 fun HomeScreenCard(
     modifier: Modifier,
-    text:String,
-    onClick : ()->Unit,
+    text: String,
+    onClick: () -> Unit,
 ) {
     Card(modifier = modifier
         .height(250.dp)
@@ -151,7 +155,8 @@ fun HomeScreenCard(
         }
         .padding(8.dp),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)) {
-        Row(modifier = Modifier.fillMaxHeight(),
+        Row(
+            modifier = Modifier.fillMaxHeight(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -160,7 +165,7 @@ fun HomeScreenCard(
                 textAlign = TextAlign.Center,
                 text = text,
                 maxLines = 2,
-                fontSize =25.sp,
+                fontSize = 25.sp,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.SemiBold,
             )
