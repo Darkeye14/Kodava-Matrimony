@@ -14,7 +14,7 @@ android {
         applicationId = "com.ThandhBendhu.kodavamatrimony"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
+        versionCode = 2
         versionName = "2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

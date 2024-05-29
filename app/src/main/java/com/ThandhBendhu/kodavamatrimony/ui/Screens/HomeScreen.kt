@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -135,6 +136,35 @@ fun HomeScreen(
 
                     navigateTo(navController, DestinationScreen.ChatListScreen.route)
                 }
+            }
+            Card(
+                modifier = Modifier
+                    .height(130.dp)
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .clickable {
+                        navigateTo(navController, DestinationScreen.DetailsScreen.route)
+                    },
+                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        textAlign = TextAlign.Center,
+                        text = "Developer's Details",
+                        maxLines = 2,
+                        fontSize = 25.sp,
+                        fontFamily = FontFamily.SansSerif,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(modifier = Modifier.padding(8.dp))
+                }
+                Spacer(modifier = Modifier.padding(16.dp))
+
             }
 
         }

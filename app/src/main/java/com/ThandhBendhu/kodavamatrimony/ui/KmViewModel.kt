@@ -2,7 +2,6 @@ package com.ThandhBendhu.kodavamatrimony.ui
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
@@ -16,8 +15,8 @@ import com.ThandhBendhu.kodavamatrimony.data.ChatData
 import com.ThandhBendhu.kodavamatrimony.data.ChatUser
 import com.ThandhBendhu.kodavamatrimony.data.MESSAGE
 import com.ThandhBendhu.kodavamatrimony.data.Message
-import com.ThandhBendhu.kodavamatrimony.data.SignUpEvent
 import com.ThandhBendhu.kodavamatrimony.data.PROFILES
+import com.ThandhBendhu.kodavamatrimony.data.SignUpEvent
 import com.ThandhBendhu.kodavamatrimony.data.UserData
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.DestinationScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Utility.navigateTo
@@ -47,6 +46,7 @@ class KmViewModel @Inject constructor(
     private var db: FirebaseFirestore,
     private val storage: FirebaseStorage
 ) : ViewModel() {
+
     var singleProfileBmp = mutableStateOf<Bitmap?>(null)
     var inProgress = mutableStateOf(false)
     var inProgressChat = mutableStateOf(false)
@@ -69,7 +69,6 @@ class KmViewModel @Inject constructor(
         currentUser?.uid?.let {
             getUserData(it)
         }
-
     }
 
     fun populateMessages(
@@ -115,49 +114,52 @@ class KmViewModel @Inject constructor(
                     val chatPartnerName = chatPartner.name
                     val chatPartnerAuth = chatPartner.authId
 
-                    db.collection(ACCOUNTS)
-                        .whereEqualTo("authId", auth.currentUser?.uid)
-                        .get()
-                        .addOnSuccessListener {
-                            val myName = it.toObjects<UserData>()[0].name
-                            val chatId = db.collection(CHATS).document().id
-                            db.collection(CHATS)
-                                .where(
-                                    Filter.or(
-                                        Filter.and(
-                                            Filter.equalTo("user1.accId", auth.currentUser?.uid),
-                                            Filter.equalTo("user2.accId", chatPartnerAuth),
-                                            Filter.equalTo("user2.name", chatPartnerName)
-                                        ),
-                                        //chat already exists anta
-                                        Filter.and(
-                                            Filter.equalTo("user1.accId", chatPartnerAuth),
-                                            Filter.equalTo("user2.accId", auth.currentUser?.uid),
-                                            Filter.equalTo("user1.name", chatPartnerName)
-                                        )
-                                    )
-                                ).get()
-                                .addOnSuccessListener { chatExist ->
-                                    if (chatExist.isEmpty) {
-                                        val chat =
-                                            ChatData(
-                                                chatId = chatId,
-                                                user1 = ChatUser(
-                                                    accId = auth.currentUser?.uid,
-                                                    name = myName ?: "Anonymous"
-                                                ),
-                                                user2 = ChatUser(
-                                                    accId = chatPartnerAuth,
-                                                    name = chatPartnerName ?: "Name Not Found"
-                                                )
+                    if (auth.currentUser?.uid != chatPartnerAuth) {
+
+                        db.collection(ACCOUNTS)
+                            .whereEqualTo("authId", auth.currentUser?.uid)
+                            .get()
+                            .addOnSuccessListener {
+                                val myName = it.toObjects<UserData>()[0].name
+                                val chatId = db.collection(CHATS).document().id
+                                db.collection(CHATS)
+                                    .where(
+                                        Filter.or(
+                                            Filter.and(
+                                                Filter.equalTo("user1.accId", auth.currentUser?.uid),
+                                                Filter.equalTo("user2.accId", chatPartnerAuth),
+                                                Filter.equalTo("user2.name", chatPartnerName)
+                                            ),
+                                            //chat already exists anta
+                                            Filter.and(
+                                                Filter.equalTo("user1.accId", chatPartnerAuth),
+                                                Filter.equalTo("user2.accId", auth.currentUser?.uid),
+                                                Filter.equalTo("user1.name", chatPartnerName)
                                             )
-                                        db.collection(CHATS).document(chatId).set(chat)
+                                        )
+                                    ).get()
+                                    .addOnSuccessListener { chatExist ->
+                                        if (chatExist.isEmpty) {
+                                            val chat =
+                                                ChatData(
+                                                    chatId = chatId,
+                                                    user1 = ChatUser(
+                                                        accId = auth.currentUser?.uid,
+                                                        name = myName ?: "Anonymous"
+                                                    ),
+                                                    user2 = ChatUser(
+                                                        accId = chatPartnerAuth,
+                                                        name = chatPartnerName ?: "Name Not Found"
+                                                    )
+                                                )
+                                            db.collection(CHATS).document(chatId).set(chat)
+                                        }
                                     }
-                                }
-                        }
-                        .addOnFailureListener {
-                            handleException(it)
-                        }
+                            }
+                            .addOnFailureListener {
+                                handleException(it)
+                            }
+                    }
                 }
 
 
@@ -165,16 +167,13 @@ class KmViewModel @Inject constructor(
 
     }
 
-    fun populateChat(
-
-    ) {
+    fun populateChat() {
         inProgressChat.value = true
         db.collection(CHATS).where(
             Filter.or(
                 Filter.equalTo("user1.accId", auth.currentUser?.uid),
                 Filter.equalTo("user2.accId", auth.currentUser?.uid)
             )
-
         ).addSnapshotListener { value, error ->
             if (value != null) {
                 chats.value = value.documents.mapNotNull {
@@ -537,11 +536,13 @@ class KmViewModel @Inject constructor(
                             it.toObject<UserData>()
                         }
                         if (myBookmarks.value.isNotEmpty()) {
-                            val bmk = Bookmark(
-                                auth.currentUser?.uid,
-                                myBookmarks.value[0]
-                            )
-                            db.collection(BOOKMARK).document().set(bmk)
+                            if (myBookmarks.value[0].authId != auth.currentUser?.uid) {
+                                val bmk = Bookmark(
+                                    auth.currentUser?.uid,
+                                    myBookmarks.value[0]
+                                )
+                                db.collection(BOOKMARK).document().set(bmk)
+                            }
                         }
                     }
                 }

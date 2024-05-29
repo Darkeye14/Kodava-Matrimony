@@ -10,6 +10,7 @@ import com.ThandhBendhu.kodavamatrimony.ui.KmViewModel
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.ChatListScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.CreateProfileScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.DeleteScreen
+import com.ThandhBendhu.kodavamatrimony.ui.Screens.DetailsScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.HomeScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.LoginScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.MyProfilesSscreen
@@ -33,6 +34,9 @@ fun KmNavigation() {
     ){
         composable(DestinationScreen.SplashScreen.route){
             SplashScreen(navController,viewModel)
+        }
+        composable(DestinationScreen.DetailsScreen.route){
+            DetailsScreen(navController)
         }
         composable(DestinationScreen.SignUp.route){
             SignUpScreen(navController,viewModel)
