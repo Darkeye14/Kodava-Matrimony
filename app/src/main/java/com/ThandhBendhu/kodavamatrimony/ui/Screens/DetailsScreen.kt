@@ -75,7 +75,8 @@ fun DetailsScreen(navController: NavController) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentSize(),
+                        .wrapContentSize()
+                        .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -89,9 +90,9 @@ fun DetailsScreen(navController: NavController) {
                     Spacer(modifier = Modifier.padding(6.dp))
 
                         Text(
-                            text = "This app is developed and maintained by Gyan Ponnappa Ponjanda, S/O Ponjanda Ganapathy and Ponjanda Minitha \n\n" +
+                            text = "This app is developed and maintained by Gyan Ponnappa Ponjanda\n\n" +
                                     "A second year student studying in JSS Science And Technology University (SJCE), Computer Science Dept.\n\n" +
-                                    "For any more queries, contact me through mail gyanopcon@gmail.com or whatsapp me @ 9916606182\n",
+                                    "For any more queries, contact me through mail gyanopcon@gmail.com \n",
                             modifier = Modifier.padding(8.dp),
                             fontSize = 18.sp,
                             fontFamily = FontFamily.Serif,
