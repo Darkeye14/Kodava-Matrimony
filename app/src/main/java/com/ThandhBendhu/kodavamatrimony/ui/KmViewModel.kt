@@ -395,6 +395,7 @@ class KmViewModel @Inject constructor(
     ) = CoroutineScope(Dispatchers.IO).launch {
         inProgress.value = true
         try {
+            singleProfileBmp.value = null
             val maxDownloadSize = 5L * 1024 * 1024
             val storageRef = FirebaseStorage.getInstance().reference
             val bytes = storageRef.child("images/$filename")
