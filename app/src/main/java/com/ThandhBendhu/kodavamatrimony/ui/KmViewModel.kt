@@ -185,22 +185,6 @@ class KmViewModel @Inject constructor(
         }
 
     }
-    fun genderFilter(genderRadio :String){
-        inProgressProfile.value = true
-        profiles.value = listOf()
-        db.collection(PROFILES).whereEqualTo(
-            "gender", genderRadio
-        )
-            .addSnapshotListener { value, error ->
-                if (value != null) {
-                    profiles.value = value.documents.mapNotNull {
-                        it.toObject<UserData>()
-                    }
-                    inProgressProfile.value = false
-                }
-            }
-        inProgressProfile.value = false
-    }
 
     fun onSendReply(
         chatId: String,
