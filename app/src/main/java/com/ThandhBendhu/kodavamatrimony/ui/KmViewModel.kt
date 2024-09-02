@@ -36,6 +36,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import okhttp3.internal.wait
 import java.util.Calendar
 import java.util.UUID
 import javax.inject.Inject
@@ -174,7 +175,8 @@ class KmViewModel @Inject constructor(
                 Filter.equalTo("user1.accId", auth.currentUser?.uid),
                 Filter.equalTo("user2.accId", auth.currentUser?.uid)
             )
-        ).addSnapshotListener { value, error ->
+        )
+            .addSnapshotListener { value, error ->
             if (value != null) {
                 chats.value = value.documents.mapNotNull {
                     it.toObject<ChatData>()
@@ -185,6 +187,28 @@ class KmViewModel @Inject constructor(
         }
 
     }
+
+    fun genderFilter(genderRadio :String) = CoroutineScope(Dispatchers.IO).launch {
+        inProgressProfile.value = true
+    //    profiles.value = emptyList()
+        db.collection(PROFILES).whereEqualTo(
+            "gender", genderRadio
+        )
+            .addSnapshotListener  { value,error ->
+                if (value != null) {
+                    profiles.value = value.documents.mapNotNull {
+                        it.toObject<UserData>()
+                    }
+
+                    inProgressProfile.value = false
+                }
+            }
+
+        inProgressProfile.value = false
+
+    }
+
+
 
     fun onSendReply(
         chatId: String,
@@ -436,7 +460,7 @@ class KmViewModel @Inject constructor(
                 if (value != null) {
                     val user = value.toObject<UserData>()
                     userData.value = user
-                    populateProfiles()
+    //                populateProfiles()
                     populateChat()
                     onShowBookmark()
                     inProgress.value = false

@@ -75,8 +75,12 @@ fun KmNavigation() {
         composable(DestinationScreen.MyProfilesScreen.route){
            MyProfilesSscreen(navController,viewModel)
         }
+
         composable(DestinationScreen.SearchScreen.route){
-            SearchScreen(navController,viewModel)
+            val gender = it.arguments?.getString("gender")
+            gender?.let {
+                SearchScreen(navController,viewModel,gender)
+            }
         }
         composable(DestinationScreen.Login.route){
             LoginScreen(viewModel,navController)

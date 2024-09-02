@@ -5,7 +5,9 @@ sealed class DestinationScreen(var route : String) {
     data object Login:DestinationScreen("login")
     data object HomeScreen:DestinationScreen("homeScreen")
     data object SplashScreen:DestinationScreen("splashScreen")
-    data object SearchScreen:DestinationScreen("searchScreen")
+    data object SearchScreen:DestinationScreen("searchScreen/{gender}"){
+        fun createRoute(gender : String) = "searchScreen/$gender"
+    }
     data object SavedScreen:DestinationScreen("savedScreen")
     data object CreateProfileScreen:DestinationScreen("createProfileScreen")
     data object MyProfilesScreen:DestinationScreen("myProfilesScreen")
