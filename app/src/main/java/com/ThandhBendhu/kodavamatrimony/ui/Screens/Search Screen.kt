@@ -15,10 +15,14 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -67,7 +71,7 @@ fun SearchScreen(
             CommonProgressBar()
         }
         viewModel.initSearch()
-        val profiles = viewModel.profiles.value
+        var profiles = viewModel.profiles.value
         if (profiles.isEmpty()) {
 
             Column(
@@ -114,6 +118,7 @@ fun SearchScreen(
                     .padding(it)
                     .background(color = MaterialTheme.colorScheme.primaryContainer)
             ) {
+                val selectedOption = mutableStateOf<String>("")
                 item {
                     Card(
                         modifier = Modifier
@@ -139,6 +144,45 @@ fun SearchScreen(
                         }
                     }
                 }
+                item{
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(30.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+
+                    ){
+
+                        Column{
+                            Text("Male")
+                            RadioButton(
+                                selected = selectedOption.value == "Male",
+                                onClick = {
+                                    viewModel.profiles.value = listOf()
+                                    selectedOption.value = "Male"
+                                    viewModel.genderFilter("Male")
+                                    profiles = viewModel.profiles.value
+                                }
+                            )
+                        }
+                        Column{
+                            Text("Female")
+                            RadioButton(
+                                selected = selectedOption.value == "Female",
+                                onClick = {
+                                    viewModel.profiles.value = listOf()
+                                    selectedOption.value = "Female"
+                                    viewModel.genderFilter("Female")
+                                    profiles = viewModel.profiles.value
+                                }
+                            )
+                        }
+                    }
+                }
+                if(selectedOption.value != ""){
+
+                }
+
                 items(profiles) { profile ->
                     ProfileCard(
                         profile = profile,
