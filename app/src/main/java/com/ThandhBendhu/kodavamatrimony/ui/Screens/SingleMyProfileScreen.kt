@@ -44,7 +44,7 @@ fun SingleMyProfileScreen(
     viewModel: KmViewModel,
     profileId: String
 ) {
-    val currentProfile = viewModel.profiles.value.first { it.userId == profileId }
+    val currentProfile = viewModel.myProfiles.value.first { it.userId == profileId }
     viewModel.downloadSingleProfileImage(profileId)
 
     Scaffold(
