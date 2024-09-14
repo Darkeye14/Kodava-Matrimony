@@ -12,19 +12,27 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.KmNavigation
 import com.ThandhBendhu.kodavamatrimony.ui.theme.KodavaMatrimonyTheme
+import com.google.android.gms.tasks.Task
+import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.ktx.isFlexibleUpdateAllowed
 import com.google.android.play.core.ktx.isImmediateUpdateAllowed
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     private lateinit var appUpdateManager: AppUpdateManager
-    private val updateType = AppUpdateType.IMMEDIATE
+    val activityResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,40 +48,70 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
 
-    private fun checkForUpdates(){
-        appUpdateManager.appUpdateInfo.addOnSuccessListener { info->
-            val isUpdateAvailable = info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-            val isUpdateAllowed = when(updateType){
-                AppUpdateType.FLEXIBLE -> info.isFlexibleUpdateAllowed
-                AppUpdateType.IMMEDIATE -> info.isImmediateUpdateAllowed
-                else -> false
-            }
 
-            val act = registerForActivityResult(
-                ActivityResultContracts.StartActivityForResult()
-            ){  result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    // Update was successful
-                } else {
-                    // Update was canceled or failed
-                }
+         appUpdateManager = AppUpdateManagerFactory.create(applicationContext)
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
 
-            }
+        //   private val updateType = AppUpdateType.IMMEDIATE
 
-            if(isUpdateAvailable && isUpdateAllowed){
+
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                // This example applies an immediate update. To apply a flexible update
+                // instead, pass in AppUpdateType.FLEXIBLE
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+            ) {
+                // Request the update.
                 appUpdateManager.startUpdateFlowForResult(
-                    info,
-                    updateType,
-                    this,
-                    123
+                    // Pass the intent that is returned by 'getAppUpdateInfo()'.
+                    appUpdateInfo,
+                    // an activity result launcher registered via registerForActivityResult
+                    activityResultLauncher,
+                    // Or pass 'AppUpdateType.FLEXIBLE' to newBuilder() for
+                    // flexible updates.
+                    AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE)
+                        .build()
                 )
             }
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        appUpdateManager
+            .appUpdateInfo
+            .addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability()
+                    == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                ) {
+                    // If an in-app update is already running, resume the update.
+                    appUpdateManager.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        activityResultLauncher,
+                        AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+                    )
+                }
+            }
+    }
+
 }
+
+//fun checkUpdates(
+//    appUpdateInfoTask : Task<AppUpdateInfo>,
+//    act
+//){
+//    appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+//        if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+//            // This example applies an immediate update. To apply a flexible update
+//            // instead, pass in AppUpdateType.FLEXIBLE
+//            && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+//        ) {
+//            // Request the update.
+//        }
+//    }
+//}
 
 
 

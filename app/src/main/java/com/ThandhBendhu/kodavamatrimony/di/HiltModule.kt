@@ -1,5 +1,8 @@
 package com.ThandhBendhu.kodavamatrimony.di
 
+import android.content.Context
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -10,6 +13,7 @@ import com.google.firebase.storage.storage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -29,4 +33,5 @@ object HiltModule {
     @Provides
     @Singleton
     fun providesStorage():FirebaseStorage = Firebase.storage
+
 }
