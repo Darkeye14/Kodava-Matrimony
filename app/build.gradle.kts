@@ -14,8 +14,8 @@ android {
         applicationId = "com.ThandhBendhu.kodavamatrimony"
         minSdk = 24
         targetSdk = 34
-        versionCode = 7
-        versionName = "7.0"
+        versionCode = 10
+        versionName = "10.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.storage)
+    implementation(libs.firebase.messaging)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -99,6 +100,5 @@ dependencies {
     //In app google play update
     implementation("com.google.android.play:app-update:2.1.0")
     implementation("com.google.android.play:app-update-ktx:2.1.0")
-    implementation("androidx.activity:activity-ktx:1.9.2")
-    implementation ("androidx.activity:activity:1.9.2")
+
 }

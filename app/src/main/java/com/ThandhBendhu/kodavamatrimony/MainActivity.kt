@@ -1,6 +1,5 @@
 package com.ThandhBendhu.kodavamatrimony
 
-import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,21 +11,25 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.KmNavigation
 import com.ThandhBendhu.kodavamatrimony.ui.theme.KodavaMatrimonyTheme
-import com.google.android.gms.tasks.Task
-import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
-import com.google.android.play.core.ktx.isFlexibleUpdateAllowed
-import com.google.android.play.core.ktx.isImmediateUpdateAllowed
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+
+    // only if you use dagger hilt
+    //    constructor() : this(FirebaseMessaging.getInstance())
+
+
+    // UPDATES
     private lateinit var appUpdateManager: AppUpdateManager
     val activityResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
@@ -38,6 +41,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         setContent {
+
+            //Notificatons
+            FirebaseMessaging.getInstance().subscribeToTopic("general")
+
             KodavaMatrimonyTheme {
                 // A surface container using the 'background' color from the theme
                 Box(
@@ -98,20 +105,6 @@ class MainActivity : ComponentActivity() {
 
 }
 
-//fun checkUpdates(
-//    appUpdateInfoTask : Task<AppUpdateInfo>,
-//    act
-//){
-//    appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-//        if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-//            // This example applies an immediate update. To apply a flexible update
-//            // instead, pass in AppUpdateType.FLEXIBLE
-//            && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-//        ) {
-//            // Request the update.
-//        }
-//    }
-//}
 
 
 
