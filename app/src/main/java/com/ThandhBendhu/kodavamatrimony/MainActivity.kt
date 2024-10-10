@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
         }
 
 
-         appUpdateManager = AppUpdateManagerFactory.create(applicationContext)
+        appUpdateManager = AppUpdateManagerFactory.create(applicationContext)
         val appUpdateInfoTask = appUpdateManager.appUpdateInfo
 
         //   private val updateType = AppUpdateType.IMMEDIATE
