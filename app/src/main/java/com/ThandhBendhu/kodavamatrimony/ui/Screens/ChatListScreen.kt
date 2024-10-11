@@ -158,8 +158,8 @@ fun ChatListScreen(
                     chat.chatId?.let {
                         ChatCard(
                             name = chatUser.name,
-                            onDeleteClick ={
-                                           showMessage.value =true
+                            onDeleteClick = {
+                                showMessage.value = true
                             },
                             onItemClick = {
                                 navigateTo(
@@ -168,7 +168,7 @@ fun ChatListScreen(
                                 )
                             }
                         )
-                        if (showMessage.value){
+                        if (showMessage.value) {
                             DeleteChatDialog(viewModel = viewModel, chatId = it)
                         }
                     }
@@ -181,7 +181,7 @@ fun ChatListScreen(
 @Composable
 fun DeleteChatDialog(
     viewModel: KmViewModel,
-    chatId :String
+    chatId: String
 ) {
     val openDialog = remember { mutableStateOf(true) }
     if (openDialog.value) {

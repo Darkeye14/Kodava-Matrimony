@@ -41,7 +41,8 @@ import com.ThandhBendhu.kodavamatrimony.ui.Utility.navigateTo
 @Composable
 fun SearchScreen(
     navController: NavController,
-    viewModel: KmViewModel
+    viewModel: KmViewModel,
+    gender : String
 ) {
 
     Scaffold(
@@ -66,9 +67,15 @@ fun SearchScreen(
         if (viewModel.inProgressProfile.value) {
             CommonProgressBar()
         }
-        viewModel.initSearch()
-        val profiles = viewModel.profiles.value
-        if (profiles.isEmpty()) {
+//        viewModel.initSearch()
+//        val profiles = viewModel.profiles.value
+
+    viewModel.genderFilter(gender)
+
+    val totalProfiles = viewModel.profiles.value
+
+
+        if (totalProfiles.isEmpty()) {
 
             Column(
                 modifier = Modifier
@@ -139,7 +146,7 @@ fun SearchScreen(
                         }
                     }
                 }
-                items(profiles) { profile ->
+                items(totalProfiles) { profile ->
                     ProfileCard(
                         profile = profile,
                         onItemClick = {

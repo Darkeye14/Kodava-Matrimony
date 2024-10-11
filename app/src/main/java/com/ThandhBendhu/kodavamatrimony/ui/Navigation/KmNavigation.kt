@@ -10,11 +10,13 @@ import com.ThandhBendhu.kodavamatrimony.ui.KmViewModel
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.ChatListScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.CreateProfileScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.DeleteScreen
+import com.ThandhBendhu.kodavamatrimony.ui.Screens.DetailsScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.HomeScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.LoginScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.MyProfilesSscreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.SavedScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.SignUpScreen
+import com.ThandhBendhu.kodavamatrimony.ui.Screens.SingleBookmarkScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.SingleChatScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.SingleMyProfileScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.SingleProfileScreen
@@ -34,6 +36,9 @@ fun KmNavigation() {
         composable(DestinationScreen.SplashScreen.route){
             SplashScreen(navController,viewModel)
         }
+        composable(DestinationScreen.DetailsScreen.route){
+            DetailsScreen(navController)
+        }
         composable(DestinationScreen.SignUp.route){
             SignUpScreen(navController,viewModel)
         }
@@ -44,6 +49,13 @@ fun KmNavigation() {
             val profileId = it.arguments?.getString("profileId")
             profileId?.let {
                 SingleProfileScreen(navController,viewModel, profileId)
+            }
+
+        }
+        composable(DestinationScreen.SingleBookmarkScreen.route){
+            val profileId = it.arguments?.getString("profileId")
+            profileId?.let {
+                SingleBookmarkScreen(navController,viewModel, profileId)
             }
 
         }
@@ -71,8 +83,12 @@ fun KmNavigation() {
         composable(DestinationScreen.MyProfilesScreen.route){
            MyProfilesSscreen(navController,viewModel)
         }
+
         composable(DestinationScreen.SearchScreen.route){
-            SearchScreen(navController,viewModel)
+            val gender = it.arguments?.getString("gender")
+            gender?.let {
+                SearchScreen(navController,viewModel,gender)
+            }
         }
         composable(DestinationScreen.Login.route){
             LoginScreen(viewModel,navController)

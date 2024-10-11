@@ -149,7 +149,7 @@ fun SavedScreen(
                                 profile.data?.userId?.let {
                                     navigateTo(
                                         navController,
-                                        DestinationScreen.SingleProfileScreen.createRoute(id = it)
+                                        DestinationScreen.SingleBookmarkScreen.createRoute(id = it)
                                     )
                                 }
                             }

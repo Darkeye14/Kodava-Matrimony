@@ -124,7 +124,7 @@ fun CreateProfileScreen(
                 mutableStateOf(TextFieldValue())
             }
             val genderState = remember {
-                mutableStateOf("")
+                mutableStateOf("Male")
             }
             val requirementsState = remember {
                 mutableStateOf(TextFieldValue())
@@ -210,6 +210,7 @@ fun CreateProfileScreen(
                         }
                         .padding(end = 16.dp)
                 ) {
+
                     RadioButton(
                         selected = info.isChecked,
                         onClick = {
