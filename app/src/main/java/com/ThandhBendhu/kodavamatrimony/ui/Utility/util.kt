@@ -18,12 +18,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -235,4 +238,72 @@ fun DeleteChatButton(
         text = { Text(text = "Delete") },
         containerColor = MaterialTheme.colorScheme.errorContainer
     )
+}
+
+
+@Composable
+fun Alert(
+    navController: NavController
+) {
+    val openDialog = remember { mutableStateOf(true) }
+    val selectedOption = remember { mutableStateOf("Male") }
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = { openDialog.value = false },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        navigateTo(navController, DestinationScreen.SearchScreen.createRoute(gender = selectedOption.value))
+                        openDialog.value = false
+                    }) {
+                    Text(text = "OK")
+                }
+            },
+            title = {
+                Text(text = "Please Select", fontWeight = FontWeight.Bold)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            text = {
+                Column(
+                    modifier = Modifier
+                        //         .fillMaxSize()
+                        .background(Color.Transparent)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(30.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+
+                    ){
+
+                        Column{
+                            Text("Male")
+                            RadioButton(
+                                selected = selectedOption.value == "Male",
+                                onClick = {
+                                    selectedOption.value = "Male"
+                                }
+                            )
+                        }
+                        Column{
+                            Text("Female")
+                            RadioButton(
+                                selected = selectedOption.value == "Female",
+                                onClick = {
+                                    selectedOption.value = "Female"
+
+
+                                }
+                            )
+                        }
+                    }
+
+                }
+            }
+        )
+    }
 }

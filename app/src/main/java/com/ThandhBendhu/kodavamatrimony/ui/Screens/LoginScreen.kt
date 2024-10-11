@@ -131,7 +131,6 @@ fun LoginScreen(
                 onClick = {
                     viewModel.login(emailState.value.text,passwordState.value.text,navController)
                     //careful
-
                 },
                 modifier = Modifier
                     .padding(8.dp)

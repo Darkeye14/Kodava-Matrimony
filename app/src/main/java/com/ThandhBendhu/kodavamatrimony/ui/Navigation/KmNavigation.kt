@@ -16,6 +16,7 @@ import com.ThandhBendhu.kodavamatrimony.ui.Screens.LoginScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.MyProfilesSscreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.SavedScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.SignUpScreen
+import com.ThandhBendhu.kodavamatrimony.ui.Screens.SingleBookmarkScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.SingleChatScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.SingleMyProfileScreen
 import com.ThandhBendhu.kodavamatrimony.ui.Screens.SingleProfileScreen
@@ -51,6 +52,13 @@ fun KmNavigation() {
             }
 
         }
+        composable(DestinationScreen.SingleBookmarkScreen.route){
+            val profileId = it.arguments?.getString("profileId")
+            profileId?.let {
+                SingleBookmarkScreen(navController,viewModel, profileId)
+            }
+
+        }
         composable(DestinationScreen.SingleMyProfileScreen.route){
             val profileId = it.arguments?.getString("profileId")
             profileId?.let {
@@ -75,8 +83,12 @@ fun KmNavigation() {
         composable(DestinationScreen.MyProfilesScreen.route){
            MyProfilesSscreen(navController,viewModel)
         }
+
         composable(DestinationScreen.SearchScreen.route){
-            SearchScreen(navController,viewModel)
+            val gender = it.arguments?.getString("gender")
+            gender?.let {
+                SearchScreen(navController,viewModel,gender)
+            }
         }
         composable(DestinationScreen.Login.route){
             LoginScreen(viewModel,navController)

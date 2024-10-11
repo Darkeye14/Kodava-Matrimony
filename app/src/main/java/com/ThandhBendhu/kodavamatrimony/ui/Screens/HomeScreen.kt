@@ -13,18 +13,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +42,7 @@ import com.ThandhBendhu.kodavamatrimony.ui.KmViewModel
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.BottomNavigationItem
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.BottomNavigationMenu
 import com.ThandhBendhu.kodavamatrimony.ui.Navigation.DestinationScreen
+import com.ThandhBendhu.kodavamatrimony.ui.Utility.Alert
 import com.ThandhBendhu.kodavamatrimony.ui.Utility.navigateTo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,6 +83,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val openDialog = remember { mutableStateOf(false) }
             Row(
                 modifier = Modifier
                     .padding(8.dp)
@@ -92,6 +99,7 @@ fun HomeScreen(
                     Text(text = "Log Out")
                 }
             }
+
             Card(
                 modifier = Modifier
                     .height(130.dp)
@@ -129,8 +137,12 @@ fun HomeScreen(
                 modifier = Modifier.padding(8.dp)
             ) {
                 HomeScreenCard(Modifier.weight(1f), text = "View Profiles") {
+                    openDialog.value = true
+                    //                  navigateTo(navController, DestinationScreen.SearchScreen.route)
+                }
+                if (openDialog.value) {
+                    Alert(navController)
 
-                    navigateTo(navController, DestinationScreen.SearchScreen.route)
                 }
                 HomeScreenCard(Modifier.weight(1f), text = "Direct Messages") {
 

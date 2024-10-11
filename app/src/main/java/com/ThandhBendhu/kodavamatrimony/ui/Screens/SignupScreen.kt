@@ -158,14 +158,15 @@ fun SignUpScreen(
             )
             Button(
                 onClick = {
-                    viewModel.signUp1(
-                        nameState.value.text.trim(),
-                        emailState.value.text.trim(),
-                        passwordState.value.text.trim(),
-                        navController
-                    )
-                    //careful
-
+                    if(nameState.value.text.trim().isNotEmpty() && emailState.value.text.trim().isNotEmpty() && passwordState.value.text.trim().isNotEmpty()) {
+                        viewModel.signUp1(
+                            nameState.value.text.trim(),
+                            emailState.value.text.trim(),
+                            passwordState.value.text.trim(),
+                            navController
+                        )
+                        //careful
+                    }
                 },
                 modifier = Modifier
                     .padding(8.dp)

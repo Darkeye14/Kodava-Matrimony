@@ -29,4 +29,8 @@ object HiltModule {
     @Provides
     @Singleton
     fun providesStorage():FirebaseStorage = Firebase.storage
+
+//    @Provides
+//    fun providesMessaging(): FirebaseMessaging = Firebase.messaging
+
 }
