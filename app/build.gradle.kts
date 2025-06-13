@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.ThandhBendhu.kodavamatrimony"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.ThandhBendhu.kodavamatrimony"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 12
         versionName = "12.0"
 
@@ -43,7 +43,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.5"
     }
     packaging {
         resources {
@@ -76,7 +76,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     // ViewModel Compose
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.1")
 
     //Dagger - Hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
