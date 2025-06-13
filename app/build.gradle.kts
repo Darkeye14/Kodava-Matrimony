@@ -88,8 +88,8 @@ dependencies {
     ksp ("com.google.dagger:hilt-compiler:2.51.1")
 
     // For instrumentation tests
-    androidTestImplementation  ("com.google.dagger:hilt-android-testing:2.51")
-    kspAndroidTest ("com.google.dagger:hilt-compiler:2.51")
+    androidTestImplementation  ("com.google.dagger:hilt-android-testing:2.51.1")
+    kspAndroidTest ("com.google.dagger:hilt-compiler:2.51.1")
 
     // For local unit tests
     testImplementation ("com.google.dagger:hilt-android-testing:2.51.1")
