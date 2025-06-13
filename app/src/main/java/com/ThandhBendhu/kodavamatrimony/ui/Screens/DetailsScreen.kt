@@ -90,9 +90,9 @@ fun DetailsScreen(navController: NavController) {
                     Spacer(modifier = Modifier.padding(6.dp))
 
                         Text(
-                            text = "This app is developed and maintained by Gyan Ponnappa Ponjanda\n\n" +
-                                    "A second year student studying in JSS Science And Technology University (SJCE), Computer Science Dept.\n\n" +
-                                    "For any more queries, contact me through mail gyanponnappa@gmail.com \n",
+                            text = "This app is developed by an engineering student based in Mysuru\n\n" +
+                                    "You can reach me out at penultimatesolution@gmail.com \n\n" +
+                                    "This was created under the presidency of Ponjanda Ganapathy in 2024\n",
                             modifier = Modifier.padding(8.dp),
                             fontSize = 18.sp,
                             fontFamily = FontFamily.Serif,
